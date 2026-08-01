@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Medic.in - Patient Dashboard</title>
+    <title>medic.in</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
@@ -12,7 +12,6 @@
 </head>
 <body data-page="home">
     <div class="app-shell">
-        
         <!-- SIDEBAR -->
         <aside class="sidebar" aria-label="Primary navigation">
             <div class="sidebar-top">
@@ -22,11 +21,10 @@
                     </button>
                     <div class="brand-mark">
                         <div class="brand-copy">
-                            <p class="eyebrow">Medic.in</p>
+                            <p class="eyebrow">medic.in</p>
                         </div>
                     </div>
                 </div>
-                
                 <nav class="sidebar-nav" aria-label="Main pages">
                     <button class="nav-item active" data-target="view-home">
                         <span class="nav-icon material-symbols-rounded" aria-hidden="true">home</span>
@@ -34,19 +32,18 @@
                     </button>
                     <button class="nav-item" data-target="view-docs">
                         <span class="nav-icon material-symbols-rounded" aria-hidden="true">description</span>
-                        <span class="nav-label">Reports</span>
+                        <span class="nav-label">Docs</span>
                     </button>
                     <button class="nav-item" data-target="view-meds">
                         <span class="nav-icon material-symbols-rounded" aria-hidden="true">pill</span>
-                        <span class="nav-label">Medicines</span>
+                        <span class="nav-label">Meds</span>
                     </button>
                     <button class="nav-item" data-target="view-maps">
                         <span class="nav-icon material-symbols-rounded" aria-hidden="true">map</span>
-                        <span class="nav-label">Locations</span>
+                        <span class="nav-label">Maps</span>
                     </button>
                 </nav>
             </div>
-            
             <button class="profile-button" type="button">
                 <span class="profile-avatar" aria-hidden="true">JD</span>
                 <span class="profile-copy-block">
@@ -58,7 +55,6 @@
 
         <!-- MAIN CONTENT AREA -->
         <main class="content-area">
-            
             <!-- TOPBAR -->
             <div class="workspace-topbar">
                 <div class="topbar-spacer" aria-hidden="true"></div>
@@ -85,7 +81,7 @@
                             </div>
                         </div>
                     </div>
-
+                    
                     <div class="popover-container">
                         <button class="topbar-action popover-toggle" id="msg-btn" type="button" aria-label="Messaging">
                             <span class="material-symbols-rounded" aria-hidden="true">chat_bubble</span>
@@ -100,16 +96,31 @@
                     </div>
                 </div>
             </div>
-            
+
+            <!-- New Urgency Notification Bar -->
+            <div id="urgency-notification" class="notification-bar">
+                <div class="notification-content">
+                    <!-- Red Urgency Alert Icon -->
+                    <svg class="urgency-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                    <span class="notification-text">Appointment scheduled for 24/08/26 was rescheduled to 25/08/26</span>
+                </div>
+                <!-- Cross Button -->
+                <button id="close-notification" class="close-btn">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
             <!-- VIEWS CONTAINER -->
             <div class="views-container">
-                
                 <!-- ==================== HOME VIEW ==================== -->
                 <section class="page-shell page-view active" id="view-home">
-                    
                     <!-- Row 1: Chart (2/3) + Quick Actions (1/3) -->
                     <section class="naked-row">
-                        <div class="chart-panel">
+                        <div class="panel two-thirds-panel chart-panel">
                             <div class="chart-header">
                                 <div class="chart-title">
                                     <h2>My Health Activity</h2>
@@ -132,8 +143,8 @@
                                 <div class="clustered-chart-track" id="home-main-chart"></div>
                             </div>
                         </div>
-                        
-                        <div class="action-btn-stack">
+
+                        <div class="action-btn-stack one-third-panel">
                             <button class="action-card-btn route-btn" data-target="view-maps">
                                 <div class="btn-icon bg-app-alpha"><span class="material-symbols-rounded">map</span></div>
                                 <span class="btn-label">Book Applications</span>
@@ -153,32 +164,61 @@
                         </div>
                     </section>
 
-                    <!-- Row 2: Status & Load -->
-                    <section class="page-row panel">
-                        <div class="row-grid three-col">
-                            <article class="mini-card">
-                                <p class="card-label">Profile Status</p>
-                                <h3>Up to date</h3>
-                                <div class="status-line"><span class="status-dot"></span><span>All insurance verified</span></div>
-                            </article>
-                            <article class="mini-card">
-                                <p class="card-label">Upcoming</p>
-                                <ul class="action-list">
-                                    <li>Dr. Carter - General Checkup</li>
-                                    <li>Pharmacy Delivery - Today 2PM</li>
-                                </ul>
-                            </article>
-                            <article class="mini-card">
-                                <p class="card-label">My Summary</p>
-                                <div class="metric-grid compact">
-                                    <div class="metric-card"><strong>03</strong><span>Active Meds</span></div>
-                                    <div class="metric-card"><strong>12</strong><span>Past Visits</span></div>
-                                    <div class="metric-card"><strong>01</strong><span>New Report</span></div>
+                    <!-- Row 2: Status (Auto-fill) + Spending Donut (Perfect Square) -->
+                    <section class="naked-row">
+                        <!-- Left: Takes up all remaining space -->
+                        <div class="panel status-panel">
+                            <div class="row-grid three-col">
+                                <article class="mini-card">
+                                    <p class="card-label">Profile Status</p>
+                                    <h3>Up to date</h3>
+                                    <div class="status-line"><span class="status-dot"></span><span>All insurance verified</span></div>
+                                </article>
+                                <article class="mini-card">
+                                    <p class="card-label">Upcoming</p>
+                                    <ul class="action-list">
+                                        <li>Dr. Carter - General Checkup</li>
+                                        <li>Pharmacy - Today 2PM</li>
+                                    </ul>
+                                </article>
+                                <article class="mini-card">
+                                    <p class="card-label">My Summary</p>
+                                    <div class="metric-grid compact">
+                                        <div class="metric-card"><strong>03</strong><span>Meds</span></div>
+                                        <div class="metric-card"><strong>12</strong><span>Visits</span></div>
+                                        <div class="metric-card"><strong>01</strong><span>Report</span></div>
+                                    </div>
+                                </article>
+                            </div>
+                        </div>
+
+                        <!-- Right: Locked Perfect Square -->
+                        <div class="panel donut-panel minimalist">
+                            <div class="chart-header">
+                                <div class="chart-title">
+                                    <h2>Healthcare Spending</h2>
                                 </div>
-                            </article>
+                            </div>
+                            
+                            <div class="interactive-donut-container">
+                                <!-- SVG Donut Chart with Gradient Depth Colors -->
+                                <svg viewBox="0 0 42 42" class="interactive-donut">
+                                    <!-- Insurance: Darkest (Deep Purple) -->
+                                    <circle class="donut-segment" cx="21" cy="21" r="15.915494309" fill="transparent" stroke="#6D28D9" stroke-width="6" stroke-dasharray="65 35" stroke-dashoffset="25" data-title="Insurance" data-amount=" 97,500"></circle>
+                                    <!-- Paid: Lighter Variant (Soft Violet) -->
+                                    <circle class="donut-segment" cx="21" cy="21" r="15.915494309" fill="transparent" stroke="#a855f7" stroke-width="6" stroke-dasharray="20 80" stroke-dashoffset="-40" data-title="Paid" data-amount=" 30,000"></circle>
+                                    <!-- Loan: Lightest Variant (Sky Blue) -->
+                                    <circle class="donut-segment" cx="21" cy="21" r="15.915494309" fill="transparent" stroke="#AAC7FF" stroke-width="6" stroke-dasharray="15 85" stroke-dashoffset="-60" data-title="Loan" data-amount=" 22,500"></circle>
+                                </svg>
+                                
+                                <!-- Center Info (Visible only on hover) -->
+                                <div class="donut-center-info">
+                                    <span class="donut-amount" id="donut-hover-amount"></span>
+                                    <span class="donut-sub" id="donut-hover-title"></span>
+                                </div>
+                            </div>
                         </div>
                     </section>
-                    
                 </section>
 
                 <!-- ==================== DOCS VIEW ==================== -->
@@ -257,11 +297,9 @@
                         </div>
                     </section>
                 </section>
-
             </div>
         </main>
     </div>
-    
     <script src="js/scripts.js"></script>
 </body>
 </html>
