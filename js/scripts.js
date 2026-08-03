@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+
     /* ==========================================================================
        1. Theme Management (Dark/Light Toggle)
        ========================================================================== */
@@ -62,6 +63,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 nav.classList.remove('active');
             }
         });
+
+        // Initialize chart logic whenever the home view becomes active
+        if (targetId === 'view-home') {
+            setTimeout(initChartPagination, 50);
+        }
     }
 
     document.querySelectorAll('[data-target]').forEach(item => {
@@ -83,12 +89,11 @@ document.addEventListener('DOMContentLoaded', () => {
        4. Clustered Column Chart Generator
        ========================================================================== */
     const chartTrack = document.getElementById('home-main-chart');
-    const prevBtn = document.getElementById('chart-prev');
-    const nextBtn = document.getElementById('chart-next');
 
-    if (chartTrack && prevBtn && nextBtn) {
+    if (chartTrack) {
         const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         const medsDatabase = ['Paracetamol', 'Amoxicillin', 'Ibuprofen', 'Metformin', 'Saline', 'Aspirin', 'Insulin', 'Omeprazole'];
+        
         let chartHTML = '';
 
         months.forEach(month => {
@@ -153,30 +158,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         chartTrack.innerHTML = chartHTML;
-
-        let currentPage = 0;
-
-        function updateChartPagination() {
-            if (currentPage === 0) {
-                chartTrack.style.transform = 'translateX(0)';
-                prevBtn.disabled = true;
-                nextBtn.disabled = false;
-            } else {
-                chartTrack.style.transform = 'translateX(-50%)';
-                prevBtn.disabled = false;
-                nextBtn.disabled = true;
-            }
-        }
-
-        prevBtn.addEventListener('click', () => {
-            currentPage = 0;
-            updateChartPagination();
-        });
-
-        nextBtn.addEventListener('click', () => {
-            currentPage = 1;
-            updateChartPagination();
-        });
     }
 
     /* ==========================================================================
@@ -189,12 +170,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (donutSegments.length > 0 && donutHoverTitle && donutHoverAmount) {
         let totalAmount = 0;
+        
         donutSegments.forEach(segment => {
             const rawAmount = segment.getAttribute('data-amount').replace(/[^\d]/g, '');
             if (rawAmount) totalAmount += parseInt(rawAmount, 10);
         });
 
         const formattedTotal = ' ' + totalAmount.toLocaleString('en-IN');
+
         const resetDonut = () => {
             donutHoverTitle.textContent = 'Total Spent';
             donutHoverAmount.textContent = formattedTotal;
@@ -224,28 +207,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (closeBtn && notificationBar && targetIcon) {
         closeBtn.addEventListener('click', () => {
-            // 1. Get positions
             const barRect = notificationBar.getBoundingClientRect();
             const targetRect = targetIcon.getBoundingClientRect();
 
-            // 2. Find the exact center of the target icon
             const targetCenterX = targetRect.left + targetRect.width / 2;
             const targetCenterY = targetRect.top + targetRect.height / 2;
 
-            // 3. Calculate where that target is relative to the notification bar
             const originX = targetCenterX - barRect.left;
             const originY = targetCenterY - barRect.top;
 
-            // 4. Set the transform origin to the target icon's relative position
             notificationBar.style.transformOrigin = `${originX}px ${originY}px`;
             
-            // 5. Apply the iOS bezier curve and scale to 0 to "suck it in"
             notificationBar.style.transition = 'transform 0.5s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.4s ease';
             notificationBar.style.transform = 'scale(0)';
             notificationBar.style.opacity = '0';
-            notificationBar.style.pointerEvents = 'none'; 
+            notificationBar.style.pointerEvents = 'none';
 
-            // 6. Smoothly collapse the empty space left behind
             setTimeout(() => {
                 notificationBar.style.transition = 'height 0.4s ease, margin 0.4s ease, padding 0.4s ease';
                 notificationBar.style.height = '0px';
@@ -254,12 +231,47 @@ document.addEventListener('DOMContentLoaded', () => {
                 notificationBar.style.border = 'none';
                 notificationBar.style.overflow = 'hidden';
                 
-                // Remove from DOM once collapsed
                 setTimeout(() => {
                     notificationBar.remove();
                 }, 400);
                 
-            }, 300); // Trigger collapse slightly before scale animation fully finishes
+            }, 300);
         });
     }
+
+    /* ==========================================================================
+       7. Chart Pagination Logic
+       ========================================================================== */
+function initChartPagination() {
+        const chartViewport = document.querySelector('.clustered-chart-viewport');
+        const prevBtn = document.getElementById('chart-prev');
+        const nextBtn = document.getElementById('chart-next');
+
+        if (!chartViewport || !prevBtn || !nextBtn) return;
+
+        const updateArrowStates = () => {
+            const maxScrollLeft = chartViewport.scrollWidth - chartViewport.clientWidth;
+            prevBtn.disabled = chartViewport.scrollLeft <= 5;
+            
+            // Added a larger 10px buffer to prevent sub-pixel rounding errors on zoomed screens
+            nextBtn.disabled = chartViewport.scrollLeft >= maxScrollLeft - 10;
+        };
+
+        prevBtn.onclick = () => {
+            chartViewport.scrollTo({ left: 0, behavior: 'smooth' });
+        };
+
+        nextBtn.onclick = () => {
+            // By scrolling to the absolute max scrollWidth instead of just clientWidth, 
+            // we guarantee December gets pulled flush to the right edge every single time.
+            chartViewport.scrollTo({ left: chartViewport.scrollWidth, behavior: 'smooth' });
+        };
+
+        chartViewport.removeEventListener('scroll', updateArrowStates);
+        chartViewport.addEventListener('scroll', updateArrowStates);
+
+        updateArrowStates();
+    }
+    // Call it initially for the default home view (small timeout ensures DOM paints first)
+    setTimeout(initChartPagination, 100);
 });
