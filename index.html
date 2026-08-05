@@ -55,23 +55,23 @@
                 </span>
             </button>
         </aside>
-        
+
         <!-- MAIN CONTENT AREA -->
         <main class="content-area">
             <!-- TOPBAR -->
             <div class="workspace-topbar">
                 <div class="topbar-spacer" aria-hidden="true"></div>
-                
+
                 <form class="topbar-search" role="search">
                     <span class="material-symbols-rounded topbar-search-icon" aria-hidden="true">search</span>
                     <input type="search" name="search" placeholder="Search my records, prescriptions, or doctors" aria-label="Search the dashboard" style="font-family: 'Inter', sans-serif !important;">
                 </form>
-                
+
                 <div class="topbar-actions" aria-label="Notifications and messaging actions">
                     <button class="topbar-action" id="theme-btn" type="button" aria-label="Toggle Theme">
                         <span class="material-symbols-rounded" aria-hidden="true">dark_mode</span>
                     </button>
-                    
+
                     <div class="popover-container">
                         <button class="topbar-action popover-toggle" id="notif-btn" type="button" aria-label="Notification">
                             <span class="material-symbols-rounded" aria-hidden="true">notifications</span>
@@ -84,7 +84,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="popover-container">
                         <button class="topbar-action popover-toggle" id="msg-btn" type="button" aria-label="Messaging">
                             <span class="material-symbols-rounded" aria-hidden="true">chat_bubble</span>
@@ -114,7 +114,7 @@
                     </svg>
                 </button>
             </div>
-            
+
             <!-- VIEWS CONTAINER -->
             <div class="views-container">
                 <!-- ==================== HOME VIEW ==================== -->
@@ -124,7 +124,7 @@
                         <div class="panel two-thirds-panel chart-panel">
                             <div class="chart-header">
                                 <div class="chart-title">
-                                    <h2 style="font-weight: 800;">My Health Activity</h2>
+                                    <h2>Health Statistics</h2>
                                     <div class="chart-legend">
                                         <span class="legend-item"><span class="legend-color bg-app"></span>Bookings</span>
                                         <span class="legend-item"><span class="legend-color bg-test"></span>Tests</span>
@@ -147,7 +147,7 @@
                         <div class="action-btn-stack one-third-panel">
                             <button class="action-card-btn route-btn" data-target="view-maps">
                                 <div class="btn-icon bg-app-alpha"><span class="material-symbols-rounded">map</span></div>
-                                <span class="btn-label">Book Applications</span>
+                                <span class="btn-label">Book Appointments</span>
                             </button>
                             <button class="action-card-btn route-btn" data-target="view-meds">
                                 <div class="btn-icon bg-med-alpha"><span class="material-symbols-rounded">pill</span></div>
@@ -163,48 +163,145 @@
                             </button>
                         </div>
                     </section>
-                    
-                    <!-- Row 2: Status + Spending Donut -->
-                    <section class="naked-row">
-                        <div class="panel status-panel">
-                            <div class="row-grid three-col">
-                                <article class="mini-card">
-                                    <p class="card-label">Profile Status</p>
-                                    <h3>Up to date</h3>
-                                    <div class="status-line"><span class="status-dot"></span><span>All insurance verified</span></div>
-                                </article>
-                                <article class="mini-card">
-                                    <p class="card-label">Upcoming</p>
-                                    <ul class="action-list">
-                                        <li>Dr. Carter - General Checkup</li>
-                                        <li>Pharmacy - Today 2PM</li>
-                                    </ul>
-                                </article>
-                                <article class="mini-card">
-                                    <p class="card-label">My Summary</p>
-                                    <div class="metric-grid compact">
-                                        <div class="metric-card"><strong>03</strong><span>Meds</span></div>
-                                        <div class="metric-card"><strong>12</strong><span>Visits</span></div>
-                                        <div class="metric-card"><strong>01</strong><span>Report</span></div>
-                                    </div>
-                                </article>
-                            </div>
-                        </div>
-                        
-                        <div class="panel donut-panel minimalist">
+
+                    <!-- Row 2: Left Square (Docs) + Middle Flex (Summary) + Right Square (Donut) -->
+                    <section class="naked-row second-row-wrapper">
+                        <!-- 1. Left-most Perfect Square (Documents) -->
+                        <div class="panel perfect-square-panel document-panel">
                             <div class="chart-header">
                                 <div class="chart-title">
-                                    <h2 style="font-weight: 800;">Healthcare Spending</h2>
+                                    <h2>Recent Documents</h2>
                                 </div>
                             </div>
-                            
+                            <div class="document-list-stack">
+                                <button class="document-link-btn" type="button">
+                                    <div class="doc-btn-left">
+                                        <span class="material-symbols-rounded">medical_information</span>
+                                        <span class="doc-name">Blood Panel</span>
+                                    </div>
+                                    <span class="material-symbols-rounded link-arrow">arrow_outward</span>
+                                </button>
+                                <button class="document-link-btn" type="button">
+                                    <div class="doc-btn-left">
+                                        <span class="material-symbols-rounded">vaccines</span>
+                                        <span class="doc-name">Vaccination</span>
+                                    </div>
+                                    <span class="material-symbols-rounded link-arrow">arrow_outward</span>
+                                </button>
+                                <button class="document-link-btn" type="button">
+                                    <div class="doc-btn-left">
+                                        <span class="material-symbols-rounded">assignment</span>
+                                        <span class="doc-name">Discharge</span>
+                                    </div>
+                                    <span class="material-symbols-rounded link-arrow">arrow_outward</span>
+                                </button>
+                                <button class="document-link-btn" type="button">
+                                    <div class="doc-btn-left">
+                                        <span class="material-symbols-rounded">health_and_safety</span>
+                                        <span class="doc-name">Insurance</span>
+                                    </div>
+                                    <span class="material-symbols-rounded link-arrow">arrow_outward</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 2. Middle Container: Bento Summary -->
+                        <div class="panel middle-flex-panel bento-panel">
+                            <!-- Bento Grid -->
+                            <div class="bento-grid">
+                                <!-- Left Bento: Message Card -->
+                                <article class="bento-card message-card">
+                                    <div class="message-header">
+                                        <div class="doctor-avatar">DC</div>
+                                        <div class="sender-info">
+                                            <strong>Dr. Carter</strong>
+                                            <span class="subtle">Primary Care • Aug 15</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="message-body">
+                                        <p>"Your latest blood panel looks perfect. Vitals are completely stable. No changes needed to your routine, keep it up!"</p>
+                                    </div>
+
+                                    <div class="message-footer">
+                                        <form class="reply-input-wrapper" onsubmit="event.preventDefault();">
+                                            <input type="text" class="reply-input" placeholder="Reply..." aria-label="Reply to message">
+                                            <button class="reply-submit-btn" type="submit" aria-label="Send reply">
+                                                <span class="material-symbols-rounded">subdirectory_arrow_left</span>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </article>
+
+                                <!-- Right Bento: Timeline -->
+                                <div class="bento-card timeline-card">
+                                    <div class="timeline-header">
+                                        <h3>Upcoming Appointments</h3>
+                                        <!-- WRAPPER FOR 3-DOT MENU -->
+                                        <div class="timeline-options-wrapper">
+                                            <span class="material-symbols-rounded">more_horiz</span>
+                                            <!-- POPUP MENU -->
+                                            <div class="timeline-options-menu">
+                                                <a href="#" class="options-menu-item">Reschedule Appointment</a>
+                                                <a href="#" class="options-menu-item danger">Cancel Appointment</a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="bento-timeline">
+                                        <a href="#" class="timeline-item">
+                                            <div class="date-block highlight-blue">
+                                                <span class="month">AUG</span>
+                                                <span class="day">25</span>
+                                            </div>
+                                            <div class="timeline-details">
+                                                <strong>General Checkup</strong>
+                                                <span class="subtle">10:00 AM • Main Clinic</span>
+                                            </div>
+                                            <div class="hover-action">
+                                                <span class="material-symbols-rounded">add</span>
+                                            </div>
+                                        </a>
+
+                                        <a href="#" class="timeline-item">
+                                            <div class="date-block highlight-purple">
+                                                <span class="month">SEP</span>
+                                                <span class="day">02</span>
+                                            </div>
+                                            <div class="timeline-details">
+                                                <strong>Cardiology Follow-up</strong>
+                                                <span class="subtle">2:30 PM • City Hospital</span>
+                                            </div>
+                                            <div class="hover-action">
+                                                <span class="material-symbols-rounded">add</span>
+                                            </div>
+                                        </a>
+                                        
+                                        <!-- THE DYNAMIC ADD BUTTON -->
+                                        <button class="add-appointment-btn">
+                                            <span class="material-symbols-rounded">add</span>
+                                            Schedule New
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 3. Right-most Perfect Square (Donut) -->
+                        <div class="panel perfect-square-panel donut-panel minimalist">
+                            <div class="chart-header">
+                                <div class="chart-title">
+                                    <h2>Total Expenditure</h2>
+                                </div>
+                            </div>
+
                             <div class="interactive-donut-container">
                                 <svg viewBox="0 0 42 42" class="interactive-donut">
-                                    <circle class="donut-segment" cx="21" cy="21" r="15.915494309" fill="transparent" stroke="#6D28D9" stroke-width="6" stroke-dasharray="65 35" stroke-dashoffset="25" data-title="Insurance" data-amount=" 97,500"></circle>
-                                    <circle class="donut-segment" cx="21" cy="21" r="15.915494309" fill="transparent" stroke="#a855f7" stroke-width="6" stroke-dasharray="20 80" stroke-dashoffset="-40" data-title="Paid" data-amount=" 30,000"></circle>
-                                    <circle class="donut-segment" cx="21" cy="21" r="15.915494309" fill="transparent" stroke="#AAC7FF" stroke-width="6" stroke-dasharray="15 85" stroke-dashoffset="-60" data-title="Loan" data-amount=" 22,500"></circle>
+                                    <circle class="donut-segment" cx="21" cy="21" r="15.915494309" fill="transparent" stroke="#6D28D9" stroke-width="6" stroke-dasharray="65 35" stroke-dashoffset="25" data-title="Insurance" data-amount="₹97,500"></circle>
+                                    <circle class="donut-segment" cx="21" cy="21" r="15.915494309" fill="transparent" stroke="#a855f7" stroke-width="6" stroke-dasharray="20 80" stroke-dashoffset="-40" data-title="Paid" data-amount="₹30,000"></circle>
+                                    <circle class="donut-segment" cx="21" cy="21" r="15.915494309" fill="transparent" stroke="#AAC7FF" stroke-width="6" stroke-dasharray="15 85" stroke-dashoffset="-60" data-title="Loan" data-amount="₹22,500"></circle>
                                 </svg>
-                                
+
                                 <div class="donut-center-info">
                                     <span class="donut-amount" id="donut-hover-amount"></span>
                                     <span class="donut-sub" id="donut-hover-title"></span>
@@ -213,7 +310,7 @@
                         </div>
                     </section>
                 </section>
-                
+
                 <!-- ==================== DOCS VIEW ==================== -->
                 <section class="page-shell page-view" id="view-docs">
                     <section class="page-row panel">
@@ -221,7 +318,8 @@
                             <article class="mini-card">
                                 <p class="card-label">Recent Reports</p>
                                 <h3>Blood Panel</h3>
-                                <p class="subtle">Completed on Oct 12. All markers normal.</p>
+                                <p class="subtle">Completed on Oct 12. All markers normal.</p>index.html
+
                             </article>
                             <article class="mini-card">
                                 <p class="card-label">Documents</p>
@@ -239,7 +337,7 @@
                         </div>
                     </section>
                 </section>
-                
+
                 <!-- ==================== MEDS VIEW ==================== -->
                 <section class="page-shell page-view" id="view-meds">
                     <section class="page-row panel">
@@ -264,7 +362,7 @@
                         </div>
                     </section>
                 </section>
-                
+
                 <!-- ==================== MAPS VIEW ==================== -->
                 <section class="page-shell page-view" id="view-maps">
                     <section class="page-row panel">
