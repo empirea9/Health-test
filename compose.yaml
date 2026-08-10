@@ -1,0 +1,40 @@
+services:
+  app:
+    build:
+      context: .
+    restart: unless-stopped
+    environment:
+      HOST: 0.0.0.0
+      PORT: 8000
+      ABDM_API_KEY: ${ABDM_API_KEY:?Set ABDM_API_KEY in .env}
+    ports:
+      - "127.0.0.1:8000:8000"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8000/healthz').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    depends_on:
+      app:
+        condition: service_healthy
+    command:
+      - tunnel
+      - --no-autoupdate
+      - --protocol
+      - http2
+      - run
+      - --token
+      - ${CLOUDFLARE_TUNNEL_TOKEN:?Set CLOUDFLARE_TUNNEL_TOKEN in .env}
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
