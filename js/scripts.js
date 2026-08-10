@@ -200,42 +200,51 @@ if (themeBtn && themeIcon) {
         }
     }
 
-    /* ==========================================================================
-       6. Notification Bar Minimize Animation
+ /* ==========================================================================
+       6. Notification Bar Minimize Animation & Session Storage
        ========================================================================== */
     const closeBtn = document.getElementById('close-notification');
     const notificationBar = document.getElementById('urgency-notification');
     const targetIcon = document.getElementById('notif-btn');
     
-    if (closeBtn && notificationBar && targetIcon) {
-        closeBtn.addEventListener('click', () => {
-            const barRect = notificationBar.getBoundingClientRect();
-            const targetRect = targetIcon.getBoundingClientRect();
-            const targetCenterX = targetRect.left + targetRect.width / 2;
-            const targetCenterY = targetRect.top + targetRect.height / 2;
-            
-            const originX = targetCenterX - barRect.left;
-            const originY = targetCenterY - barRect.top;
-            
-            notificationBar.style.transformOrigin = `${originX}px ${originY}px`;
-            notificationBar.style.transition = 'transform 0.5s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.4s ease';
-            notificationBar.style.transform = 'scale(0)';
-            notificationBar.style.opacity = '0';
-            notificationBar.style.pointerEvents = 'none';
-            
-            setTimeout(() => {
-                notificationBar.style.transition = 'height 0.4s ease, margin 0.4s ease, padding 0.4s ease';
-                notificationBar.style.height = '0px';
-                notificationBar.style.margin = '0px';
-                notificationBar.style.padding = '0px';
-                notificationBar.style.border = 'none';
-                notificationBar.style.overflow = 'hidden';
+    if (notificationBar) {
+        // 1. Check local session on load
+        if (sessionStorage.getItem('urgencyNotifClosed') === 'true') {
+            notificationBar.style.display = 'none';
+        } 
+        // 2. Always bind the close button if it exists
+        else if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+                // Store the dismissed state in the current session
+                sessionStorage.setItem('urgencyNotifClosed', 'true');
                 
-                setTimeout(() => {
-                    notificationBar.remove();
-                }, 400);
-            }, 300);
-        });
+                // If the bell icon exists, animate into it
+                if (targetIcon) {
+                    const barRect = notificationBar.getBoundingClientRect();
+                    const targetRect = targetIcon.getBoundingClientRect();
+                    const targetCenterX = targetRect.left + targetRect.width / 2;
+                    const targetCenterY = targetRect.top + targetRect.height / 2;
+                    
+                    const originX = targetCenterX - barRect.left;
+                    const originY = targetCenterY - barRect.top;
+                    
+                    notificationBar.style.transformOrigin = `${originX}px ${originY}px`;
+                    notificationBar.style.transform = 'scale(0)';
+                    notificationBar.style.opacity = '0';
+                    notificationBar.style.pointerEvents = 'none';
+                    
+                    setTimeout(() => {
+                        notificationBar.style.display = 'none';
+                    }, 400); 
+                } else {
+                    // Fallback: Just fade out if the bell icon is missing
+                    notificationBar.style.opacity = '0';
+                    setTimeout(() => {
+                        notificationBar.style.display = 'none';
+                    }, 300);
+                }
+            });
+        }
     }
 
     /* ==========================================================================
@@ -556,3 +565,73 @@ if (themeBtn && themeIcon) {
         initMap();
     }
 });
+
+/* ==========================================================================
+       9. Docs View Dynamic Folders
+       ========================================================================== */
+    const folderData = {
+        rx: [
+            { name: "General Checkup - Dr. Carter", type: "PDF", size: "800 KB", icon: "prescriptions", color: "bg-app-alpha" },
+            { name: "Dermatologist Rx", type: "PDF", size: "1.1 MB", icon: "prescriptions", color: "bg-app-alpha" },
+            { name: "Refill Authorization", type: "JPG", size: "450 KB", icon: "image", color: "bg-med-alpha" }
+        ],
+        labs: [
+            { name: "Complete Blood Count", type: "PDF", size: "1.2 MB", icon: "science", color: "bg-test-alpha" },
+            { name: "Lipid Panel", type: "PDF", size: "900 KB", icon: "science", color: "bg-test-alpha" },
+            { name: "Thyroid Test", type: "PDF", size: "1.5 MB", icon: "science", color: "bg-test-alpha" },
+            { name: "Metabolic Panel", type: "PDF", size: "1.1 MB", icon: "science", color: "bg-test-alpha" }
+        ],
+        bills: [
+            { name: "Pharmacy Bill - Aug", type: "JPG", size: "300 KB", icon: "receipt_long", color: "bg-med-alpha" },
+            { name: "Hospital Copay", type: "PDF", size: "1.4 MB", icon: "receipt_long", color: "bg-med-alpha" },
+            { name: "Insurance Claim #9082", type: "PDF", size: "2.1 MB", icon: "health_and_safety", color: "bg-neutral-alpha" },
+            { name: "Dental Out-of-pocket", type: "JPG", size: "550 KB", icon: "receipt_long", color: "bg-med-alpha" }
+        ],
+        scans: [
+            { name: "Chest X-Ray", type: "PNG", size: "4.5 MB", icon: "radiology", color: "bg-test-alpha" },
+            { name: "Dental Scan", type: "JPG", size: "2.2 MB", icon: "dentistry", color: "bg-test-alpha" }
+        ]
+    };
+
+    window.openFolder = function(folderKey, folderTitle) {
+        const titleEl = document.getElementById('current-folder-title');
+        const gridEl = document.getElementById('folder-contents-grid');
+        
+        if (!titleEl || !gridEl) return;
+        
+        titleEl.textContent = folderTitle;
+        
+        // Toggle active visual state
+        document.querySelectorAll('.folder-card').forEach(card => {
+            if (card.getAttribute('data-folder') === folderKey) {
+                card.classList.add('active');
+            } else {
+                card.classList.remove('active');
+            }
+        });
+
+        // Clear and populate files
+        gridEl.innerHTML = '';
+        
+        folderData[folderKey].forEach(file => {
+            gridEl.innerHTML += `
+                <button class="document-link-btn" type="button" onclick="alert('Downloading ${file.name}...')">
+                    <div class="doc-btn-left">
+                        <div class="btn-icon ${file.color}"><span class="material-symbols-rounded">${file.icon}</span></div>
+                        <div class="doc-text-wrapper">
+                            <span class="doc-name">${file.name}</span>
+                            <span class="subtle" style="font-size: 0.75rem;">${file.type} • ${file.size}</span>
+                        </div>
+                    </div>
+                    <span class="material-symbols-rounded link-arrow">download</span>
+                </button>
+            `;
+        });
+    };
+    
+    // Initialize default folder on page load
+    setTimeout(() => {
+        if (document.getElementById('folder-contents-grid')) {
+            window.openFolder('rx', 'Prescriptions');
+        }
+    }, 100);

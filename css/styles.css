@@ -177,6 +177,12 @@ ul { list-style: none; }
 }
 .popover-panel.active { opacity: 1; visibility: visible; transform: translateY(0); }
 .notification-bar {
+    top: 96px; 
+    right: 32px;
+    max-width: 450px;
+    z-index: 45; /* Lowered from 100 so it sits behind the sidebar */
+    box-shadow: var(--shadow-md);
+    backdrop-filter: var(--glass-blur);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -360,11 +366,11 @@ h3 { font-size: 1.5rem; }
 .sender-info { min-width: 0; }
 .sender-info strong, .sender-info .subtle { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .sender-info strong { color: var(--text-main); font-size: 0.95rem; }
-.message-body { background: var(--surface-hover); border-radius: 0 16px 16px 16px; padding: 14px; margin: 12px 0; font-size: 0.9rem; line-height: 1.5; color: var(--text-main); border-left: 2px solid #3B82F6; overflow-y: auto; flex: 1 1 0%; min-height: 0; }
+.message-body { background: var(--surface-glass); border-radius: 0 16px 16px 16px; padding: 14px; margin: 12px 0; font-size: 0.9rem; line-height: 1.5; color: var(--text-main); border-left: 2px solid #3B82F6; overflow-y: auto; flex: 1 1 0%; min-height: 0; }
 .message-body::-webkit-scrollbar { width: 4px; }
 .message-body::-webkit-scrollbar-thumb { background: var(--border-highlight); border-radius: 4px; }
 .message-footer { display: flex; width: 100%; }
-.reply-input-wrapper { display: flex; align-items: center; width: 100%; background: var(--surface-hover); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 4px 6px 4px 12px; transition: border-color var(--transition-fast); }
+.reply-input-wrapper { display: flex; align-items: center; width: 100%; background: var(--surface-glass); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 4px 6px 4px 12px; transition: border-color var(--transition-fast); }
 .reply-input-wrapper:focus-within { border-color: #3B82F6; }
 .reply-input { flex: 1; font-size: 0.85rem; color: var(--text-main); background: transparent; border: none; outline: none; width: 100%; }
 .reply-submit-btn { display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 8px; background: #3B82F6; color: #ffffff; cursor: pointer; transition: background var(--transition-fast), transform var(--transition-fast); flex-shrink: 0; }
@@ -378,7 +384,7 @@ h3 { font-size: 1.5rem; }
 .timeline-options-menu { position: absolute; top: calc(100% + 8px); right: -8px; background: var(--surface-card); border: 1px solid var(--border-highlight); border-radius: 12px; padding: 8px; width: max-content; box-shadow: var(--shadow-md); opacity: 0; visibility: hidden; transform: translateY(-8px); transition: all var(--transition-fast); z-index: 100; }
 .timeline-options-wrapper:hover .timeline-options-menu { opacity: 1; visibility: visible; transform: translateY(0); }
 .options-menu-item { display: block; padding: 10px 16px; border-radius: 8px; font-size: 0.85rem; color: var(--text-main); text-decoration: none; transition: background var(--transition-fast), color var(--transition-fast); }
-.options-menu-item:hover { background: var(--surface-hover); }
+.options-menu-item:hover { background: var(--surface-glass); }
 .options-menu-item.danger { color: #ef4444; margin-top: 4px; }
 .options-menu-item.danger:hover { background: rgba(239, 68, 68, 0.15); }
 .bento-timeline { display: flex; flex-direction: column; gap: 12px; flex: 1; min-height: 0; overflow-y: auto; padding-right: 4px; }
@@ -588,10 +594,19 @@ h3 { font-size: 1.5rem; }
     .sidebar-header, .profile-button { display: none !important; }
     .sidebar-top { flex-direction: row; width: 100%; padding: 0; }
     .sidebar-nav { flex-direction: row; width: 100%; justify-content: space-around; padding: 0 8px; gap: 0; }
-    .nav-item { flex-direction: column; padding: 8px 12px; gap: 4px; background: transparent !important; border-radius: 8px; }
-    .nav-item .material-symbols-rounded { font-size: 24px; }
+    .nav-item { flex-direction: column; padding: 8px 12px; gap: 4px; background: transparent !important; border-radius: 8px; transition: transform 0.15s ease, color 0.2s ease; transform-origin: center; -webkit-tap-highlight-color: transparent;}
+    .nav-item .material-symbols-rounded { font-size: 24px; transition: transform 0.3s ease; will-change: transform; }
+    .nav-item:active { transform: scale(0.95); }
     .nav-item.active { color: var(--accent-primary); }
     .nav-label { display: block !important; opacity: 1 !important; visibility: visible !important; font-size: 0.65rem; text-align: center; margin: 0; }
+
+    .nav-item.active .material-symbols-rounded { animation: navPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+    
+    @keyframes navPop {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.35) translateY(-2px); }
+        100% { transform: scale(1) translateY(0); }
+    }
     
     .content-area { order: 1; }
     .workspace-topbar { height: auto; min-height: 70px; padding: 12px 16px; flex-wrap: nowrap; gap: 12px; }
@@ -622,4 +637,207 @@ h3 { font-size: 1.5rem; }
     .maps-detail-card { flex: none; height: auto; padding: 20px; overflow-y: visible; }
     .maps-btn-stack { display: flex; flex-direction: column; gap: 10px; }
     .maps-btn-stack .action-card-btn { flex-direction: row; justify-content: flex-start; text-align: left; padding: 12px 16px; min-height: 56px; }
+}
+    /* Mobile Notification Override */
+    .notification-bar {
+        top: 86px;
+        left: 16px;
+        right: 16px;
+        max-width: none;
+    }
+
+    /* ==========================================================================
+       Docs View Specific Mobile Overrides
+       ========================================================================== */
+    
+    /* 1. Prevent panel blowout and enforce 1-column layout for files */
+    #view-docs .panel {
+        max-width: 100%;
+        min-width: 0;
+        overflow: hidden;
+    }
+
+    .docs-file-grid { 
+        display: flex !important; 
+        flex-direction: column; 
+        width: 100%; 
+    }
+
+    /* 2. Critical flex overrides to allow long file names to truncate (...) */
+    .document-link-btn {
+        width: 100%;
+        min-width: 0; /* Allows button to shrink below content size */
+        padding: 12px 16px;
+    }
+
+    .doc-btn-left,
+    .doc-text-wrapper {
+        min-width: 0; /* Safely unlocks text truncation */
+        overflow: hidden;
+        flex: 1;
+    }
+
+    .doc-name {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
+        width: 100%;
+    }
+
+    /* 3. Force the 3 Action Buttons to stack vertically on mobile */
+    #view-docs .action-btn-stack {
+        display: flex !important;
+        flex-direction: column !important;
+        width: 100%;
+    }
+
+    #view-docs .action-card-btn {
+        flex-direction: row !important;
+        justify-content: flex-start !important;
+        text-align: left !important;
+        min-height: 64px !important;
+        padding: 16px 20px !important;
+        width: 100%;
+    }
+
+    /* Fix button stack alignment on Home and Docs pages */
+    .action-btn-stack.one-third-panel {
+        padding: 0 !important;
+    }
+
+/* ==========================================================================
+   15. Docs View Styling
+   ========================================================================== */
+.docs-file-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    width: 100%;
+    margin-top: 8px;
+}
+
+.folder-contents-scroll {
+    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
+    padding-right: 8px;
+    align-content: flex-start;
+}
+.folder-contents-scroll::-webkit-scrollbar { width: 4px; }
+.folder-contents-scroll::-webkit-scrollbar-thumb { background: var(--border-highlight); border-radius: 4px; }
+
+/* Truncation Fixes for Files */
+.doc-btn-left { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
+.doc-text-wrapper { text-align: left; display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.doc-name { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; width: 100%; }
+
+/* --- Vertical List for Viewing Folder Contents --- */
+.folder-file-list {
+    display: flex;
+    flex-direction: column; /* Stacks items vertically */
+    gap: 12px;
+    width: 100%;
+    margin-top: 8px;
+}
+
+.folder-file-list .document-link-btn {
+    flex: 0 0 auto; /* Disables vertical stretching so buttons stay normal height */
+}
+
+/* --- Vertical Category Folders --- */
+.folder-grid {
+    display: flex;
+    flex-direction: column; /* Vertical Stacking */
+    gap: 12px;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 8px;
+}
+.folder-grid::-webkit-scrollbar { width: 4px; }
+.folder-grid::-webkit-scrollbar-thumb { background: var(--border-highlight); border-radius: 4px; }
+
+.folder-card {
+    background: var(--surface-glass);
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Horizontal internal layout */
+    gap: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex: 0 0 auto; /* Disables vertical stretching */
+}
+.folder-text { display: flex; flex-direction: column; text-align: left; flex: 1; }
+
+.folder-card:hover {
+    transform: translateX(4px);
+    border-color: var(--accent-primary);
+    background: var(--surface-glass);
+}
+.folder-card.active {
+    border-color: var(--accent-primary);
+    background: var(--accent-primary-alpha);
+    box-shadow: inset 0 0 0 1px var(--accent-primary);
+    color: var(--accent-primary);
+}
+/* --- High Contrast Framed File Preview (Right Square) --- */
+
+.preview-text-light {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* --- Prescription Preview List --- */
+.rx-list-container {
+    background: rgba(35, 31, 36, 0.9); /* Your requested Dark Mode color */
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    padding: 16px;
+    margin: 16px 0;
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+}
+
+/* Force Light Mode to use a clean background so black text is readable */
+body.light-theme .rx-list-container {
+    background: var(--surface-glass);
+}
+
+.rx-list-container::-webkit-scrollbar { width: 4px; }
+.rx-list-container::-webkit-scrollbar-thumb { background: var(--border-highlight); border-radius: 4px; }
+
+.rx-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px dashed var(--border-subtle);
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+}
+
+.rx-list-item:last-child { 
+    border-bottom: none; 
+    padding-bottom: 0; 
+    margin-bottom: 0; 
+}
+
+/* Dynamically switches text between white (dark mode) and black (light mode) */
+.rx-text {
+    color: var(--text-main);
+}
+
+/* Adapting Buttons */
+.dark-inner-btn {
+    background: var(--surface-card) !important;
+    color: var(--text-main) !important;
+    border: 1px solid var(--border-subtle) !important;
+    box-shadow: var(--shadow-sm) !important;
+}
+.dark-inner-btn:hover {
+    background: var(--surface-hover) !important;
+    border-color: var(--accent-primary) !important;
 }
