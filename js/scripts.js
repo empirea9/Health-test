@@ -119,12 +119,10 @@ if (themeBtn && themeIcon) {
             const testCount = data.test.length;
             const medCount = data.meds.length;
             
-            // Map the height percentages logically based on low numerical counts
             const appHeight = appCount === 0 ? 5 : (appCount * 30) + 15;
             const testHeight = testCount === 0 ? 5 : (testCount * 30) + 15;
             const medHeight = medCount === 0 ? 5 : (medCount * 30) + 15;
             
-            // Generate clean tooltip lists
             const appDates = appCount > 0 ? data.app.map(d => `${data.month} ${d}`).join('<br>') : 'None';
             const testDates = testCount > 0 ? data.test.map(d => `${data.month} ${d}`).join('<br>') : 'None';
             const medList = medCount > 0 ? data.meds.join('<br>') : 'None';
@@ -248,8 +246,8 @@ if (themeBtn && themeIcon) {
         }
     }
 
-    /* ==========================================================================
-       7. Chart Pagination Logic (Updated for CSS Grid)
+/* ==========================================================================
+       7. Chart Pagination Logic (Mathematical Scroll Lock)
        ========================================================================== */
     function initChartPagination() {
         const chartViewport = document.querySelector('.clustered-chart-viewport');
@@ -260,27 +258,24 @@ if (themeBtn && themeIcon) {
         
         const updateArrowStates = () => {
             const maxScrollLeft = chartViewport.scrollWidth - chartViewport.clientWidth;
-            prevBtn.disabled = chartViewport.scrollLeft <= 5;
+            // 10px buffer handles mobile sub-pixel scrolling irregularities
+            prevBtn.disabled = chartViewport.scrollLeft <= 10;
             nextBtn.disabled = chartViewport.scrollLeft >= maxScrollLeft - 10;
         };
         
         prevBtn.onclick = () => {
-            chartViewport.scrollBy({ 
-                left: -chartViewport.clientWidth * 0.9,
-                behavior: 'smooth' 
-            });
+            chartViewport.scrollTo({ left: 0, behavior: 'smooth' });
         };
         
         nextBtn.onclick = () => {
-            chartViewport.scrollBy({ 
-                left: chartViewport.clientWidth * 0.9,
-                behavior: 'smooth' 
-            });
+            chartViewport.scrollTo({ left: chartViewport.scrollWidth, behavior: 'smooth' });
         };
         
         chartViewport.removeEventListener('scroll', updateArrowStates);
         chartViewport.addEventListener('scroll', updateArrowStates);
-        updateArrowStates();
+        
+        // Initial state check
+        setTimeout(updateArrowStates, 50);
     }
     
     setTimeout(initChartPagination, 100);
