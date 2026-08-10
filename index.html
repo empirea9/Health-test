@@ -64,7 +64,7 @@
                 <div class="topbar-spacer" aria-hidden="true"></div>
                 <form class="topbar-search" role="search">
                     <span class="material-symbols-rounded topbar-search-icon" aria-hidden="true">search</span>
-                    <input type="search" name="search" placeholder="Search my records, prescriptions, or doctors" aria-label="Search the dashboard">
+                    <input type="search" name="search" placeholder="Search medicines by brand, generic name, or substance" aria-label="Search medicines" minlength="2" required>
                 </form>
                 <div class="topbar-actions" aria-label="Notifications and messaging actions">
                     <button class="topbar-action" id="theme-btn" type="button" aria-label="Toggle Theme">
@@ -95,20 +95,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <div id="urgency-notification" class="notification-bar">
-                <div class="notification-content">
-                    <svg class="urgency-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                    </svg>
-                    <span class="notification-text">Appointment scheduled for 24/08/26 was rescheduled to 25/08/26</span>
-                </div>
-                <button id="close-notification" class="close-btn">
-                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                </button>
             </div>
 
             <!-- VIEWS CONTAINER -->
@@ -320,28 +306,66 @@
                     </section>
                 </section>
 
-                <!-- ==================== MEDS VIEW ==================== -->
+                <!-- ==================== MEDS / STORE VIEW ==================== -->
                 <section class="page-shell page-view" id="view-meds">
-                    <section class="page-row panel">
-                        <div class="row-grid three-col">
-                            <article class="mini-card">
-                                <p class="card-label">Active Prescriptions</p>
-                                <h3>3 items</h3>
-                                <p class="subtle">Metformin, Saline, and Omeprazole.</p>
-                            </article>
-                            <article class="mini-card">
-                                <p class="card-label">Adherence</p>
-                                <div class="stack-list">
-                                    <div class="stack-row"><span>Morning Routine</span><strong>100%</strong></div>
-                                    <div class="stack-row"><span>Evening Routine</span><strong>85%</strong></div>
-                                </div>
-                            </article>
-                            <article class="mini-card">
-                                <p class="card-label">Order Status</p>
-                                <h3>Out for delivery</h3>
-                                <p class="subtle">Your refill order is arriving today by 2:00 PM.</p>
-                            </article>
+                    <section class="page-row panel store-panel">
+                        <div class="store-header">
+                            <div>
+                                <p class="card-label">ABDM Drug Registry</p>
+                                <h2>Find medicines</h2>
+                                <p class="subtle">Search verified Indian medicines by brand, generic name, or substance.</p>
+                            </div>
+                            <div class="store-header-actions">
+                                <span class="store-source-badge">
+                                    <span class="material-symbols-rounded" aria-hidden="true">verified</span>
+                                    Government registry
+                                </span>
+                                <button class="store-cart-toggle" id="store-cart-toggle" type="button" aria-label="View cart" aria-expanded="false">
+                                    <span class="material-symbols-rounded" aria-hidden="true">shopping_cart</span>
+                                    <span>View cart</span>
+                                    <span class="store-cart-count" id="store-cart-count">0</span>
+                                </button>
+                            </div>
                         </div>
+
+                        <form class="store-search-form" id="medicine-search-form" role="search">
+                            <span class="material-symbols-rounded store-search-icon" aria-hidden="true">search</span>
+                            <input id="medicine-search-input" type="search" name="medicine" placeholder="Try Paracetamol, Dolo, or Metformin" aria-label="Search medicines" minlength="2" autocomplete="off" required>
+                            <button class="store-search-button" type="submit">
+                                <span class="material-symbols-rounded" aria-hidden="true">search</span>
+                                Search
+                            </button>
+                        </form>
+
+                        <div class="store-search-meta" aria-live="polite">
+                            <p id="medicine-search-status">Enter at least two characters to search the ABDM Drug Registry.</p>
+                        </div>
+
+                        <div class="medicine-results" id="medicine-results">
+                            <div class="store-empty-state">
+                                <span class="material-symbols-rounded" aria-hidden="true">medication</span>
+                                <h3>Search the national medicine registry</h3>
+                                <p class="subtle">Results include the brand, generic composition, manufacturer, dose form, and route.</p>
+                            </div>
+                        </div>
+
+                        <button class="store-cart-backdrop" id="store-cart-backdrop" type="button" aria-label="Close cart" hidden></button>
+                        <aside class="store-cart-panel" id="store-cart-panel" role="dialog" aria-modal="true" aria-labelledby="store-cart-title" hidden>
+                            <div class="store-cart-header">
+                                <div>
+                                    <p class="card-label">Your selection</p>
+                                    <h2 id="store-cart-title">Medicine cart</h2>
+                                </div>
+                                <button class="store-cart-close" id="store-cart-close" type="button" aria-label="Close cart">
+                                    <span class="material-symbols-rounded" aria-hidden="true">close</span>
+                                </button>
+                            </div>
+                            <div class="store-cart-items" id="store-cart-items"></div>
+                            <div class="store-cart-footer">
+                                <p>Prices and availability are confirmed by the dispensing pharmacy.</p>
+                                <button class="store-cart-clear" id="store-cart-clear" type="button">Clear cart</button>
+                            </div>
+                        </aside>
                     </section>
                 </section>
 

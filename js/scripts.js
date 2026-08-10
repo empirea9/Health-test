@@ -57,6 +57,7 @@ if (themeBtn && themeIcon) {
         
         const targetView = document.getElementById(targetId);
         if (targetView) targetView.classList.add('active');
+        document.body.classList.toggle('store-view-active', targetId === 'view-meds');
         
         document.querySelectorAll('.sidebar-nav .nav-item').forEach(nav => {
             if (nav.getAttribute('data-target') === targetId) {
@@ -554,5 +555,458 @@ if (themeBtn && themeIcon) {
 
     if (document.getElementById('view-maps')?.classList.contains('active')) {
         initMap();
+    }
+
+    /* ==========================================================================
+       15. ABDM Drug Registry Medicine Search
+       ========================================================================== */
+    const medicineSearchForm = document.getElementById("medicine-search-form");
+    const medicineSearchInput = document.getElementById("medicine-search-input");
+    const medicineSearchStatus = document.getElementById("medicine-search-status");
+    const medicineResults = document.getElementById("medicine-results");
+    const topbarMedicineSearch = document.querySelector(".topbar-search");
+    const topbarMedicineSearchInput = topbarMedicineSearch?.querySelector("input[name=search]");
+    const storeCartToggle = document.getElementById("store-cart-toggle");
+    const storeCartCount = document.getElementById("store-cart-count");
+    const storeCartPanel = document.getElementById("store-cart-panel");
+    const storeCartBackdrop = document.getElementById("store-cart-backdrop");
+    const storeCartClose = document.getElementById("store-cart-close");
+    const storeCartItems = document.getElementById("store-cart-items");
+    const storeCartClear = document.getElementById("store-cart-clear");
+    let medicineSearchController = null;
+    let hasUserSearchedMedicines = false;
+    let currentMedicineResults = new Map();
+    let storeCart = [];
+
+    try {
+        const savedCart = JSON.parse(localStorage.getItem("medic-store-cart") || "[]");
+        if (Array.isArray(savedCart)) storeCart = savedCart;
+    } catch {
+        localStorage.removeItem("medic-store-cart");
+    }
+
+    const escapeMedicineText = (value) => String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll("\"", "&quot;")
+        .replaceAll("\x27", "&#039;");
+
+    const renderMedicineSearchState = (icon, title, message) => {
+        medicineResults.innerHTML = `
+            <div class="store-empty-state">
+                <span class="material-symbols-rounded" aria-hidden="true">${icon}</span>
+                <h3>${escapeMedicineText(title)}</h3>
+                <p class="subtle">${escapeMedicineText(message)}</p>
+            </div>
+        `;
+    };
+
+    const renderMedicineSkeletons = () => {
+        medicineResults.innerHTML = Array.from({ length: 6 }, () => `
+            <article class="medicine-card medicine-card-skeleton" aria-hidden="true">
+                <div class="skeleton-line wide"></div>
+                <div class="skeleton-line medium"></div>
+                <div class="skeleton-line short"></div>
+                <div class="skeleton-line medium"></div>
+            </article>
+        `).join("");
+    };
+
+    const firstListValue = (value, fallback = "Not specified") => {
+        if (Array.isArray(value)) return value.filter(Boolean).join(", ") || fallback;
+        return value || fallback;
+    };
+
+    const getMedicineVisual = (doseForm) => {
+        const normalized = String(doseForm || "").toLowerCase();
+        if (normalized.includes("inject") || normalized.includes("vial")) {
+            return { icon: "vaccines", variant: "injection", label: "Injection" };
+        }
+        if (normalized.includes("syrup") || normalized.includes("liquid") || normalized.includes("solution")) {
+            return { icon: "medication_liquid", variant: "liquid", label: "Liquid" };
+        }
+        if (normalized.includes("cream") || normalized.includes("ointment") || normalized.includes("gel")) {
+            return { icon: "dermatology", variant: "topical", label: "Topical" };
+        }
+        if (normalized.includes("inhal") || normalized.includes("spray")) {
+            return { icon: "air", variant: "inhaler", label: "Inhaler" };
+        }
+        return { icon: "pill", variant: "tablet", label: "Tablet / capsule" };
+    };
+
+    const renderMedicineCardCartControl = (medicineId) => {
+        const id = String(medicineId || "");
+        const safeId = escapeMedicineText(id);
+        const cartItem = storeCart.find((item) => item.id === id);
+        if (!cartItem) {
+            return `
+                <button class="medicine-add-cart" type="button" data-medicine-id="${safeId}">
+                    <span class="material-symbols-rounded" aria-hidden="true">add_shopping_cart</span>
+                    Add to cart
+                </button>
+            `;
+        }
+        const quantity = Math.min(99, Math.max(1, Number(cartItem.quantity) || 1));
+        return `
+            <div class="medicine-card-stepper" aria-label="Cart quantity">
+                <button type="button" data-card-cart-action="decrease" data-medicine-id="${safeId}" aria-label="Decrease quantity">
+                    <span class="material-symbols-rounded" aria-hidden="true">remove</span>
+                </button>
+                <strong><span>${quantity}</span> in cart</strong>
+                <button type="button" data-card-cart-action="increase" data-medicine-id="${safeId}" aria-label="Increase quantity">
+                    <span class="material-symbols-rounded" aria-hidden="true">add</span>
+                </button>
+            </div>
+        `;
+    };
+
+    const renderMedicineCard = (medicine) => {
+        const brandName = escapeMedicineText(medicine.brandName || "Unnamed medicine");
+        const genericName = escapeMedicineText(medicine.genericName || "Generic name unavailable");
+        const manufacturer = escapeMedicineText(medicine.supplierName || "Manufacturer unavailable");
+        const substance = escapeMedicineText(firstListValue(medicine.substanceName));
+        const route = escapeMedicineText(firstListValue(medicine.routeOfAdministrationName));
+        const rawDoseForm = medicine.doseForm || "Dose form unavailable";
+        const doseForm = escapeMedicineText(rawDoseForm);
+        const visual = getMedicineVisual(rawDoseForm);
+        const registryId = escapeMedicineText(medicine.brandIdentifier || "Unavailable");
+
+        return `
+            <article class="medicine-card">
+                <div class="medicine-card-visual medicine-visual-${visual.variant}" aria-hidden="true">
+                    <span class="medicine-visual-orb"></span>
+                    <span class="material-symbols-rounded medicine-visual-icon">${visual.icon}</span>
+                    <span class="medicine-visual-label">${visual.label}</span>
+                </div>
+                <div class="medicine-card-header">
+                    <div class="medicine-card-title">
+                        <h3 title="${brandName}">${brandName}</h3>
+                        <p title="${genericName}">${genericName}</p>
+                    </div>
+                </div>
+                <div class="medicine-tags">
+                    <span class="medicine-tag">${doseForm}</span>
+                    <span class="medicine-tag secondary">${substance}</span>
+                </div>
+                <div class="medicine-details">
+                    <div class="medicine-detail">
+                        <span class="material-symbols-rounded" aria-hidden="true">factory</span>
+                        <span title="${manufacturer}">${manufacturer}</span>
+                    </div>
+                    <div class="medicine-detail">
+                        <span class="material-symbols-rounded" aria-hidden="true">route</span>
+                        <span title="${route}">${route}</span>
+                    </div>
+                </div>
+                <div class="medicine-card-actions">
+                    <p class="medicine-registry-id">ABDM Brand ID: ${registryId}</p>
+                    <div class="medicine-card-cart-control" data-cart-control-id="${registryId}">
+                        ${renderMedicineCardCartControl(medicine.brandIdentifier)}
+                    </div>
+                </div>
+            </article>
+        `;
+    };
+
+    const syncMedicineCardControls = () => {
+        currentMedicineResults.forEach((medicine, id) => {
+            const control = medicineResults?.querySelector(`[data-cart-control-id="${CSS.escape(id)}"]`);
+            if (control) control.innerHTML = renderMedicineCardCartControl(id);
+        });
+    };
+
+    const persistStoreCart = () => {
+        localStorage.setItem("medic-store-cart", JSON.stringify(storeCart));
+    };
+
+    const renderStoreCart = () => {
+        if (!storeCartItems || !storeCartCount) return;
+        const totalQuantity = storeCart.reduce((total, item) => total + Math.max(1, Number(item.quantity) || 1), 0);
+        storeCartCount.textContent = String(totalQuantity);
+        storeCartCount.classList.toggle("has-items", totalQuantity > 0);
+        if (storeCartClear) storeCartClear.disabled = storeCart.length === 0;
+
+        if (storeCart.length === 0) {
+            storeCartItems.innerHTML = `
+                <div class="store-cart-empty">
+                    <span class="material-symbols-rounded" aria-hidden="true">shopping_cart</span>
+                    <h3>Your cart is empty</h3>
+                    <p>Add medicines from the search results to see them here.</p>
+                </div>
+            `;
+            return;
+        }
+
+        storeCartItems.innerHTML = storeCart.map((item) => {
+            const visual = getMedicineVisual(item.doseForm);
+            const id = escapeMedicineText(item.id);
+            const name = escapeMedicineText(item.name);
+            const genericName = escapeMedicineText(item.genericName);
+            const manufacturer = escapeMedicineText(item.manufacturer);
+            const quantity = Math.max(1, Number(item.quantity) || 1);
+            return `
+                <article class="store-cart-item">
+                    <div class="store-cart-item-icon medicine-visual-${visual.variant}">
+                        <span class="material-symbols-rounded" aria-hidden="true">${visual.icon}</span>
+                    </div>
+                    <div class="store-cart-item-copy">
+                        <h3 title="${name}">${name}</h3>
+                        <p title="${genericName}">${genericName}</p>
+                        <span>${manufacturer}</span>
+                        <div class="store-cart-item-controls">
+                            <div class="store-cart-quantity" aria-label="Quantity controls">
+                                <button type="button" data-cart-action="decrease" data-cart-id="${id}" aria-label="Decrease quantity">−</button>
+                                <strong>${quantity}</strong>
+                                <button type="button" data-cart-action="increase" data-cart-id="${id}" aria-label="Increase quantity">+</button>
+                            </div>
+                            <button class="store-cart-remove" type="button" data-cart-action="remove" data-cart-id="${id}">Remove</button>
+                        </div>
+                    </div>
+                </article>
+            `;
+        }).join("");
+    };
+
+    let cartCloseTimer = null;
+    const openStoreCart = () => {
+        if (!storeCartPanel || !storeCartBackdrop || !storeCartToggle) return;
+        clearTimeout(cartCloseTimer);
+        storeCartPanel.hidden = false;
+        storeCartBackdrop.hidden = false;
+        requestAnimationFrame(() => {
+            storeCartPanel.classList.add("is-open");
+            storeCartBackdrop.classList.add("is-open");
+        });
+        storeCartToggle.setAttribute("aria-expanded", "true");
+        document.body.classList.add("cart-open");
+        storeCartClose?.focus();
+    };
+
+    const closeStoreCart = () => {
+        if (!storeCartPanel || !storeCartBackdrop || !storeCartToggle) return;
+        storeCartPanel.classList.remove("is-open");
+        storeCartBackdrop.classList.remove("is-open");
+        storeCartToggle.setAttribute("aria-expanded", "false");
+        document.body.classList.remove("cart-open");
+        cartCloseTimer = setTimeout(() => {
+            storeCartPanel.hidden = true;
+            storeCartBackdrop.hidden = true;
+        }, 240);
+    };
+
+    const addMedicineToCart = (medicine) => {
+        const id = String(medicine.brandIdentifier || "");
+        if (!id) return;
+        const existingItem = storeCart.find((item) => item.id === id);
+        if (existingItem) {
+            existingItem.quantity = Math.min(99, (Number(existingItem.quantity) || 1) + 1);
+        } else {
+            storeCart.push({
+                id,
+                name: medicine.brandName || "Unnamed medicine",
+                genericName: medicine.genericName || "Generic name unavailable",
+                manufacturer: medicine.supplierName || "Manufacturer unavailable",
+                doseForm: medicine.doseForm || "",
+                quantity: 1
+            });
+        }
+        persistStoreCart();
+        renderStoreCart();
+        syncMedicineCardControls();
+    };
+
+    medicineResults?.addEventListener("click", (event) => {
+        const addButton = event.target.closest(".medicine-add-cart");
+        if (addButton) {
+            const medicine = currentMedicineResults.get(addButton.dataset.medicineId);
+            if (medicine) addMedicineToCart(medicine);
+            return;
+        }
+
+        const quantityButton = event.target.closest("[data-card-cart-action]");
+        if (!quantityButton) return;
+        const itemIndex = storeCart.findIndex((item) => item.id === quantityButton.dataset.medicineId);
+        if (itemIndex < 0) return;
+        if (quantityButton.dataset.cardCartAction === "increase") {
+            storeCart[itemIndex].quantity = Math.min(99, (Number(storeCart[itemIndex].quantity) || 1) + 1);
+        } else {
+            const nextQuantity = (Number(storeCart[itemIndex].quantity) || 1) - 1;
+            if (nextQuantity <= 0) storeCart.splice(itemIndex, 1);
+            else storeCart[itemIndex].quantity = nextQuantity;
+        }
+        persistStoreCart();
+        renderStoreCart();
+        syncMedicineCardControls();
+    });
+
+    storeCartItems?.addEventListener("click", (event) => {
+        const actionButton = event.target.closest("[data-cart-action]");
+        if (!actionButton) return;
+        const itemIndex = storeCart.findIndex((item) => item.id === actionButton.dataset.cartId);
+        if (itemIndex < 0) return;
+        const action = actionButton.dataset.cartAction;
+        if (action === "increase") {
+            storeCart[itemIndex].quantity = Math.min(99, (Number(storeCart[itemIndex].quantity) || 1) + 1);
+        } else if (action === "decrease") {
+            const nextQuantity = (Number(storeCart[itemIndex].quantity) || 1) - 1;
+            if (nextQuantity <= 0) storeCart.splice(itemIndex, 1);
+            else storeCart[itemIndex].quantity = nextQuantity;
+        } else if (action === "remove") {
+            storeCart.splice(itemIndex, 1);
+        }
+        persistStoreCart();
+        renderStoreCart();
+        syncMedicineCardControls();
+    });
+
+    storeCartToggle?.addEventListener("click", openStoreCart);
+    storeCartClose?.addEventListener("click", closeStoreCart);
+    storeCartBackdrop?.addEventListener("click", closeStoreCart);
+    storeCartClear?.addEventListener("click", () => {
+        storeCart = [];
+        persistStoreCart();
+        renderStoreCart();
+        syncMedicineCardControls();
+    });
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && storeCartPanel?.classList.contains("is-open")) closeStoreCart();
+    });
+    renderStoreCart();
+
+    if (medicineSearchForm && medicineSearchInput && medicineSearchStatus && medicineResults) {
+        medicineSearchForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            hasUserSearchedMedicines = true;
+            const query = medicineSearchInput.value.trim();
+            const searchButton = medicineSearchForm.querySelector("button[type=submit]");
+            const searchMeta = medicineSearchStatus.parentElement;
+
+            if (query.length < 2) {
+                medicineSearchStatus.textContent = "Enter at least two characters to search.";
+                searchMeta.classList.add("is-error");
+                medicineSearchInput.focus();
+                return;
+            }
+
+            if (medicineSearchController) medicineSearchController.abort();
+            medicineSearchController = new AbortController();
+            searchButton.disabled = true;
+            searchMeta.classList.remove("is-error");
+            medicineSearchStatus.textContent = `Searching ABDM for “${query}”…`;
+            renderMedicineSkeletons();
+
+            try {
+                const response = await fetch(`/api/medicines?q=${encodeURIComponent(query)}`, {
+                    signal: medicineSearchController.signal,
+                    headers: { Accept: "application/json" }
+                });
+                const payload = await response.json();
+
+                if (!response.ok) {
+                    const error = new Error(payload.message || "The ABDM search could not be completed.");
+                    error.code = payload.code;
+                    throw error;
+                }
+
+                const medicines = Array.isArray(payload.results) ? payload.results : [];
+                if (medicines.length === 0) {
+                    medicineSearchStatus.textContent = `No ABDM medicines found for “${query}”.`;
+                    renderMedicineSearchState("search_off", "No medicines found", "Check the spelling or try a generic name such as Paracetamol.");
+                    return;
+                }
+
+                medicineSearchStatus.textContent = `${medicines.length} ABDM medicine${medicines.length === 1 ? "" : "s"} found for “${query}”.`;
+                currentMedicineResults = new Map(medicines.map((medicine) => [String(medicine.brandIdentifier), medicine]));
+                medicineResults.innerHTML = medicines.map(renderMedicineCard).join("");
+            } catch (error) {
+                if (error.name === "AbortError") return;
+                searchMeta.classList.add("is-error");
+                const needsKey = error.code === "ABDM_API_KEY_MISSING";
+                medicineSearchStatus.textContent = needsKey
+                    ? "ABDM API access needs to be configured on the server."
+                    : "Unable to reach the ABDM Drug Registry.";
+                renderMedicineSearchState(
+                    needsKey ? "key" : "cloud_off",
+                    needsKey ? "ABDM API key required" : "Registry unavailable",
+                    needsKey
+                        ? "Set ABDM_API_KEY when starting the server, then try again."
+                        : "Please wait a moment and retry your search."
+                );
+            } finally {
+                searchButton.disabled = false;
+            }
+        });
+
+        topbarMedicineSearch?.addEventListener("submit", (event) => {
+            event.preventDefault();
+            const query = topbarMedicineSearchInput?.value.trim() || "";
+            if (query.length < 2) {
+                topbarMedicineSearchInput?.focus();
+                return;
+            }
+
+            switchView("view-meds");
+            medicineSearchInput.value = query;
+            medicineSearchForm.requestSubmit();
+        });
+
+        const loadCommonMedicines = async () => {
+            const commonSearches = [
+                "paracetamol",
+                "ibuprofen",
+                "cetirizine",
+                "metformin",
+                "omeprazole",
+                "amoxicillin"
+            ];
+
+            medicineSearchStatus.parentElement.classList.remove("is-error");
+            medicineSearchStatus.textContent = "Loading common medicines from ABDM…";
+            renderMedicineSkeletons();
+
+            const requests = await Promise.allSettled(commonSearches.map(async (term) => {
+                const response = await fetch(`/api/medicines?q=${encodeURIComponent(term)}`, {
+                    headers: { Accept: "application/json" }
+                });
+                const payload = await response.json();
+                if (!response.ok) {
+                    const error = new Error(payload.message || "ABDM request failed.");
+                    error.code = payload.code;
+                    throw error;
+                }
+                return Array.isArray(payload.results) ? payload.results[0] : null;
+            }));
+
+            if (hasUserSearchedMedicines) return;
+
+            const medicines = requests
+                .filter((request) => request.status === "fulfilled" && request.value)
+                .map((request) => request.value)
+                .filter((medicine, index, list) => list.findIndex((item) => item.brandIdentifier === medicine.brandIdentifier) === index);
+
+            if (medicines.length === 0) {
+                const firstError = requests.find((request) => request.status === "rejected")?.reason;
+                const needsKey = firstError?.code === "ABDM_API_KEY_MISSING";
+                medicineSearchStatus.parentElement.classList.add("is-error");
+                medicineSearchStatus.textContent = needsKey
+                    ? "ABDM API access needs to be configured on the server."
+                    : "Common medicines could not be loaded from ABDM.";
+                renderMedicineSearchState(
+                    needsKey ? "key" : "cloud_off",
+                    needsKey ? "ABDM API key required" : "Registry unavailable",
+                    needsKey
+                        ? "Set ABDM_API_KEY when starting the server, then refresh this page."
+                        : "Use the search box above to retry."
+                );
+                return;
+            }
+
+            currentMedicineResults = new Map(medicines.map((medicine) => [String(medicine.brandIdentifier), medicine]));
+            medicineSearchStatus.textContent = `${medicines.length} common medicines loaded from the ABDM Drug Registry.`;
+            medicineResults.innerHTML = medicines.map(renderMedicineCard).join("");
+        };
+
+        loadCommonMedicines();
     }
 });
