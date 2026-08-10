@@ -91,42 +91,42 @@ if (themeBtn && themeIcon) {
         });
     }
 
-    /* ==========================================================================
-       4. Clustered Column Chart Generator
+/* ==========================================================================
+       4. Clustered Column Chart Generator (Static Data)
        ========================================================================== */
     const chartTrack = document.getElementById('home-main-chart');
     if (chartTrack) {
-        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        const medsDatabase = ['Paracetamol', 'Amoxicillin', 'Ibuprofen', 'Metformin', 'Saline', 'Aspirin', 'Insulin', 'Omeprazole'];
+        // Hardcoded, realistic health data points to replace randomness
+        const staticData = [
+            { month: 'Jan', app: [5, 12], test: [15], meds: ['Paracetamol x1', 'Amoxicillin x1'] },
+            { month: 'Feb', app: [10], test: [], meds: ['Ibuprofen x1'] },
+            { month: 'Mar', app: [2, 22], test: [3], meds: ['Metformin x2'] },
+            { month: 'Apr', app: [], test: [], meds: ['Omeprazole x1'] },
+            { month: 'May', app: [14], test: [14], meds: ['Aspirin x1'] },
+            { month: 'Jun', app: [8], test: [], meds: ['Insulin x2'] },
+            { month: 'Jul', app: [4], test: [5], meds: ['Paracetamol x1', 'Ibuprofen x1'] },
+            { month: 'Aug', app: [15, 25], test: [12, 16], meds: ['Amoxicillin x1'] },
+            { month: 'Sep', app: [2], test: [], meds: ['Saline x2'] },
+            { month: 'Oct', app: [11], test: [11], meds: ['Metformin x1', 'Insulin x1'] },
+            { month: 'Nov', app: [7], test: [8], meds: ['Aspirin x1'] },
+            { month: 'Dec', app: [1, 15], test: [1], meds: ['Ibuprofen x1', 'Paracetamol x1'] }
+        ];
         
         let chartHTML = '';
-        months.forEach(month => {
-            const appCount = Math.floor(Math.random() * 5) + 2;
-            const testCount = Math.floor(Math.random() * 4) + 1;
-            const medCount = Math.floor(Math.random() * 5) + 2;
+        staticData.forEach(data => {
+            const appCount = data.app.length;
+            const testCount = data.test.length;
+            const medCount = data.meds.length;
             
-            const appHeight = (appCount / 7) * 75 + 10;
-            const testHeight = (testCount / 7) * 75 + 10;
-            const medHeight = (medCount / 7) * 75 + 10;
+            // Map the height percentages logically based on low numerical counts
+            const appHeight = appCount === 0 ? 5 : (appCount * 30) + 15;
+            const testHeight = testCount === 0 ? 5 : (testCount * 30) + 15;
+            const medHeight = medCount === 0 ? 5 : (medCount * 30) + 15;
             
-            let appDates = [];
-            for (let i = 0; i < appCount; i++) {
-                appDates.push(`${month} ${Math.floor(Math.random() * 28) + 1}`);
-            }
-            appDates.sort((a, b) => parseInt(a.split(' ')[1]) - parseInt(b.split(' ')[1]));
-            
-            let testDates = [];
-            for (let i = 0; i < testCount; i++) {
-                testDates.push(`${month} ${Math.floor(Math.random() * 28) + 1}`);
-            }
-            testDates.sort((a, b) => parseInt(a.split(' ')[1]) - parseInt(b.split(' ')[1]));
-            
-            let medList = [];
-            for (let i = 0; i < medCount; i++) {
-                let randomMed = medsDatabase[Math.floor(Math.random() * medsDatabase.length)];
-                let randomQty = Math.floor(Math.random() * 40) + 5;
-                medList.push(`${randomMed} x${randomQty}`);
-            }
+            // Generate clean tooltip lists
+            const appDates = appCount > 0 ? data.app.map(d => `${data.month} ${d}`).join('<br>') : 'None';
+            const testDates = testCount > 0 ? data.test.map(d => `${data.month} ${d}`).join('<br>') : 'None';
+            const medList = medCount > 0 ? data.meds.join('<br>') : 'None';
             
             chartHTML += `
                 <div class="chart-month-group">
@@ -136,7 +136,7 @@ if (themeBtn && themeIcon) {
                             <div class="chart-bar bg-app" style="height: ${appHeight}%"></div>
                             <div class="tooltip">
                                 <span class="tooltip-title">Apps Booked</span>
-                                <span class="tooltip-details">${appDates.join('<br>')}</span>
+                                <span class="tooltip-details">${appDates}</span>
                             </div>
                         </div>
                         <div class="chart-bar-wrapper">
@@ -144,7 +144,7 @@ if (themeBtn && themeIcon) {
                             <div class="chart-bar bg-test" style="height: ${testHeight}%"></div>
                             <div class="tooltip">
                                 <span class="tooltip-title">Tests Taken</span>
-                                <span class="tooltip-details">${testDates.join('<br>')}</span>
+                                <span class="tooltip-details">${testDates}</span>
                             </div>
                         </div>
                         <div class="chart-bar-wrapper">
@@ -152,11 +152,11 @@ if (themeBtn && themeIcon) {
                             <div class="chart-bar bg-med" style="height: ${medHeight}%"></div>
                             <div class="tooltip">
                                 <span class="tooltip-title">Purchased</span>
-                                <span class="tooltip-details">${medList.join('<br>')}</span>
+                                <span class="tooltip-details">${medList}</span>
                             </div>
                         </div>
                     </div>
-                    <span class="month-label">${month}</span>
+                    <span class="month-label">${data.month}</span>
                 </div>
             `;
         });
@@ -590,6 +590,11 @@ if (themeBtn && themeIcon) {
         scans: [
             { name: "Chest X-Ray", type: "PNG", size: "4.5 MB", icon: "radiology", color: "bg-test-alpha" },
             { name: "Dental Scan", type: "JPG", size: "2.2 MB", icon: "dentistry", color: "bg-test-alpha" }
+        ],
+        // ADDED MISSING ID DATA
+        id: [
+            { name: "Domestic Help Medical Clearance", type: "PDF", size: "2.1 MB", icon: "badge", color: "bg-neutral-alpha" },
+            { name: "Insurance ID Card", type: "PDF", size: "600 KB", icon: "health_and_safety", color: "bg-app-alpha" }
         ]
     };
 

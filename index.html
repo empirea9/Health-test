@@ -178,28 +178,28 @@
                                 </div>
                             </div>
                             <div class="document-list-stack">
-                                <button class="document-link-btn" type="button">
+                                <button class="document-link-btn" type="button" data-target="view-docs" onclick="window.openFolder('labs', 'Lab Reports')">
                                     <div class="doc-btn-left">
                                         <span class="material-symbols-rounded">medical_information</span>
                                         <span class="doc-name">Blood Panel</span>
                                     </div>
                                     <span class="material-symbols-rounded link-arrow">arrow_outward</span>
                                 </button>
-                                <button class="document-link-btn" type="button">
+                                <button class="document-link-btn" type="button" data-target="view-docs" onclick="window.openFolder('id', 'Identity & Clearances')">
                                     <div class="doc-btn-left">
                                         <span class="material-symbols-rounded">vaccines</span>
                                         <span class="doc-name">Vaccination</span>
                                     </div>
                                     <span class="material-symbols-rounded link-arrow">arrow_outward</span>
                                 </button>
-                                <button class="document-link-btn" type="button">
+                                <button class="document-link-btn" type="button" data-target="view-docs" onclick="window.openFolder('rx', 'Prescriptions')">
                                     <div class="doc-btn-left">
                                         <span class="material-symbols-rounded">assignment</span>
                                         <span class="doc-name">Discharge</span>
                                     </div>
                                     <span class="material-symbols-rounded link-arrow">arrow_outward</span>
                                 </button>
-                                <button class="document-link-btn" type="button">
+                                <button class="document-link-btn" type="button" data-target="view-docs" onclick="window.openFolder('bills', 'Bills & Receipts')">
                                     <div class="doc-btn-left">
                                         <span class="material-symbols-rounded">health_and_safety</span>
                                         <span class="doc-name">Insurance</span>
@@ -304,11 +304,11 @@
                     </section>
                 </section>
 
-                <!-- ==================== DOCS VIEW ==================== -->
+ <!-- ==================== DOCS VIEW ==================== -->
                 <section class="page-shell page-view" id="view-docs">
                     
                     <!-- Row 1: Recent Files & Actions -->
-                    <section class="naked-row">
+                    <section class="naked-row docs-fluid-row">
                         <div class="panel two-thirds-panel">
                             <div class="chart-header" style="margin-bottom: 16px;">
                                 <div class="chart-title">
@@ -325,7 +325,7 @@
                                         <div class="btn-icon bg-test-alpha"><span class="material-symbols-rounded">science</span></div>
                                         <div class="doc-text-wrapper">
                                             <span class="doc-name">Complete Blood Count</span>
-                                            <span class="subtle" style="font-size: 0.75rem;">Lab Report • PDF • 1.2 MB</span>
+                                            <span class="subtle">Lab Report • PDF • 1.2 MB</span>
                                         </div>
                                     </div>
                                     <span class="material-symbols-rounded link-arrow">download</span>
@@ -336,7 +336,7 @@
                                         <div class="btn-icon bg-med-alpha"><span class="material-symbols-rounded">receipt_long</span></div>
                                         <div class="doc-text-wrapper">
                                             <span class="doc-name">Pharmacy Bill</span>
-                                            <span class="subtle" style="font-size: 0.75rem;">Receipt • JPG • 450 KB</span>
+                                            <span class="subtle">Receipt • JPG • 450 KB</span>
                                         </div>
                                     </div>
                                     <span class="material-symbols-rounded link-arrow">download</span>
@@ -347,7 +347,7 @@
                                         <div class="btn-icon bg-app-alpha"><span class="material-symbols-rounded">prescriptions</span></div>
                                         <div class="doc-text-wrapper">
                                             <span class="doc-name">Dr. Carter Rx</span>
-                                            <span class="subtle" style="font-size: 0.75rem;">Prescription • PDF • 800 KB</span>
+                                            <span class="subtle">Prescription • PDF • 800 KB</span>
                                         </div>
                                     </div>
                                     <span class="material-symbols-rounded link-arrow">download</span>
@@ -358,7 +358,7 @@
                                         <div class="btn-icon bg-neutral-alpha"><span class="material-symbols-rounded">badge</span></div>
                                         <div class="doc-text-wrapper">
                                             <span class="doc-name">Domestic Help Medical Clearance</span>
-                                            <span class="subtle" style="font-size: 0.75rem;">Govt. Form • PDF • 2.1 MB</span>
+                                            <span class="subtle">Govt. Form • PDF • 2.1 MB</span>
                                         </div>
                                     </div>
                                     <span class="material-symbols-rounded link-arrow">download</span>
@@ -383,7 +383,7 @@
                     </section>
 
                     <!-- Row 2: Categories, Folder Contents, File Preview -->
-                    <section class="naked-row second-row-wrapper">
+                    <section class="naked-row second-row-wrapper docs-fluid-row">
                         
                         <!-- Left Square: Vertically Scrollable Category Folders -->
                         <div class="panel perfect-square-panel document-panel" style="padding: 24px;">
@@ -392,35 +392,35 @@
                                 <div class="folder-card active" data-folder="rx" onclick="openFolder('rx', 'Prescriptions')">
                                     <span class="material-symbols-rounded" style="font-size: 28px; color: var(--accent-tertiary);">folder_open</span>
                                     <div class="folder-text">
-                                        <span style="font-size: 0.95rem; font-weight: 600; color: inherit;">Prescriptions</span>
+                                        <span class="folder-title">Prescriptions</span>
                                         <span class="subtle" style="font-size: 0.75rem;">12 files</span>
                                     </div>
                                 </div>
                                 <div class="folder-card" data-folder="labs" onclick="openFolder('labs', 'Lab Reports')">
                                     <span class="material-symbols-rounded" style="font-size: 28px; color: var(--accent-secondary);">folder_open</span>
                                     <div class="folder-text">
-                                        <span style="font-size: 0.95rem; font-weight: 600; color: inherit;">Lab Reports</span>
+                                        <span class="folder-title">Lab Reports</span>
                                         <span class="subtle" style="font-size: 0.75rem;">8 files</span>
                                     </div>
                                 </div>
                                 <div class="folder-card" data-folder="bills" onclick="openFolder('bills', 'Bills & Receipts')">
                                     <span class="material-symbols-rounded" style="font-size: 28px; color: #10b981;">folder_open</span>
                                     <div class="folder-text">
-                                        <span style="font-size: 0.95rem; font-weight: 600; color: inherit;">Bills & Receipts</span>
+                                        <span class="folder-title">Bills & Receipts</span>
                                         <span class="subtle" style="font-size: 0.75rem;">24 files</span>
                                     </div>
                                 </div>
                                 <div class="folder-card" data-folder="scans" onclick="openFolder('scans', 'Scans & X-Rays')">
                                     <span class="material-symbols-rounded" style="font-size: 28px; color: #ef4444;">folder_open</span>
                                     <div class="folder-text">
-                                        <span style="font-size: 0.95rem; font-weight: 600; color: inherit;">Scans & X-Rays</span>
+                                        <span class="folder-title">Scans & X-Rays</span>
                                         <span class="subtle" style="font-size: 0.75rem;">3 files</span>
                                     </div>
                                 </div>
-                                <div class="folder-card" data-folder="id" onclick="openFolder('rx', 'Identity & Clearances')">
+                                <div class="folder-card" data-folder="id" onclick="openFolder('id', 'Identity & Clearances')">
                                     <span class="material-symbols-rounded" style="font-size: 28px; color: var(--accent-primary);">folder_open</span>
                                     <div class="folder-text">
-                                        <span style="font-size: 0.95rem; font-weight: 600; color: inherit;">Identity & Clearances</span>
+                                        <span class="folder-title">Identity & Clearances</span>
                                         <span class="subtle" style="font-size: 0.75rem;">2 files</span>
                                     </div>
                                 </div>
@@ -438,7 +438,7 @@
                                     <span class="material-symbols-rounded subtle">sort</span>
                                 </div>
                                 
-                                <div id="folder-contents-grid" class="docs-file-grid folder-contents-scroll">
+                                <div id="folder-contents-grid" class="folder-file-list folder-contents-scroll">
                                     <!-- JavaScript injects dynamic file cards here -->
                                 </div>
                             </article>
@@ -473,11 +473,12 @@
                                     </div>
                                 </div>
 
-                                <div style="display: flex; gap: 12px;">
-                                    <button class="action-card-btn" data-target="view-meds" style="flex: 1; min-height: 48px; justify-content: center;">
+                                <!-- Added flex-wrap: wrap so buttons drop to next line on heavy zoom -->
+                                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                                    <button class="action-card-btn" data-target="view-meds" style="flex: 1 1 140px; justify-content: center;">
                                         <span class="material-symbols-rounded" style="font-size: 20px;">shopping_cart</span> Order Meds
                                     </button>
-                                    <button class="action-card-btn" style="flex: 1; min-height: 48px; justify-content: center;" onclick="alert('Downloading Rx PDF...')">
+                                    <button class="action-card-btn" style="flex: 1 1 140px; justify-content: center;" onclick="alert('Downloading Rx PDF...')">
                                         <span class="material-symbols-rounded" style="font-size: 20px;">download</span> PDF
                                     </button>
                                 </div>
