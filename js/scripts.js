@@ -1019,7 +1019,6 @@ if (themeBtn && themeIcon) {
         loadCommonMedicines();
     }
 });
-});
 
 /* ==========================================================================
        9. Docs View Dynamic Folders
