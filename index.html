@@ -73,7 +73,6 @@
                     
                     <!-- NOTIFICATION POPOVER -->
                     <div class="popover-container">
-                        <!-- THIS IS THE BUTTON THAT WENT MISSING -->
                         <button class="topbar-action popover-toggle" id="notif-btn" type="button" aria-label="Notification">
                             <span class="material-symbols-rounded" aria-hidden="true">notifications</span>
                         </button>
@@ -120,6 +119,25 @@
                     </svg>
                 </button>
             </div>
+
+            <!-- GLOBAL STORE CART DRAWER (Floating Globally) -->
+            <button class="store-cart-backdrop" id="store-cart-backdrop" type="button" aria-label="Close cart" hidden></button>
+            <aside class="store-cart-panel" id="store-cart-panel" role="dialog" aria-modal="true" aria-labelledby="store-cart-title" hidden>
+                <div class="store-cart-header">
+                    <div>
+                        <p class="card-label">Your selection</p>
+                        <h2 id="store-cart-title">Medicine cart</h2>
+                    </div>
+                    <button class="store-cart-close" id="store-cart-close" type="button" aria-label="Close cart">
+                        <span class="material-symbols-rounded" aria-hidden="true">close</span>
+                    </button>
+                </div>
+                <div class="store-cart-items" id="store-cart-items"></div>
+                <div class="store-cart-footer">
+                    <p>Prices and availability are confirmed by the dispensing pharmacy.</p>
+                    <button class="store-cart-clear" id="store-cart-clear" type="button">Clear cart</button>
+                </div>
+            </aside>
 
             <!-- VIEWS CONTAINER -->
             <div class="views-container">
@@ -304,7 +322,7 @@
                     </section>
                 </section>
 
- <!-- ==================== DOCS VIEW ==================== -->
+                <!-- ==================== DOCS VIEW ==================== -->
                 <section class="page-shell page-view" id="view-docs">
                     
                     <!-- Row 1: Recent Files & Actions -->
@@ -507,6 +525,30 @@
                                     <span class="store-cart-count" id="store-cart-count">0</span>
                                 </button>
                             </div>
+<<<<<<< Updated upstream
+=======
+                        </div>
+
+                        <form class="store-search-form" id="medicine-search-form" role="search">
+                            <span class="material-symbols-rounded store-search-icon" aria-hidden="true">search</span>
+                            <input id="medicine-search-input" type="search" name="medicine" placeholder="Try Paracetamol, Dolo, or Metformin" aria-label="Search medicines" minlength="2" autocomplete="off" required>
+                            <button class="store-search-button" type="submit">
+                                <span class="material-symbols-rounded" aria-hidden="true">search</span>
+                                Search
+                            </button>
+                        </form>
+
+                        <div class="store-search-meta" aria-live="polite">
+                            <p id="medicine-search-status">Enter at least two characters to search the ABDM Drug Registry.</p>
+                        </div>
+
+                        <div class="medicine-results" id="medicine-results">
+                            <div class="store-empty-state">
+                                <span class="material-symbols-rounded" aria-hidden="true">medication</span>
+                                <h3>Search the national medicine registry</h3>
+                                <p class="subtle">Results include the brand, generic composition, manufacturer, dose form, and route.</p>
+                            </div>
+>>>>>>> Stashed changes
                         </div>
 
                         <form class="store-search-form" id="medicine-search-form" role="search">
