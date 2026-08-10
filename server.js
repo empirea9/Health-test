@@ -4,7 +4,7 @@ const fs = require("fs");
 const path = require("path");
 const { URL } = require("url");
 
-const HOST = "127.0.0.1";
+const HOST = process.env.HOST || "127.0.0.1";
 const PORT = Number(process.env.PORT) || 8000;
 const ROOT = __dirname;
 const ABDM_API_KEY = (process.env.ABDM_API_KEY || "").trim();
@@ -137,7 +137,16 @@ function serveStatic(urlPath, response, isHeadRequest = false) {
 }
 
 const server = http.createServer((request, response) => {
-    const requestUrl = new URL(request.url, `http://${request.headers.host || `${HOST}:${PORT}`}`);
+    const requestUrl = new URL(request.url, "http://localhost");
+
+    if ((request.method === "GET" || request.method === "HEAD") && requestUrl.pathname === "/healthz") {
+        response.writeHead(200, {
+            "Content-Type": "application/json; charset=utf-8",
+            "Cache-Control": "no-store"
+        });
+        response.end(request.method === "HEAD" ? undefined : JSON.stringify({ status: "ok" }));
+        return;
+    }
 
     if (request.method === "GET" && requestUrl.pathname === "/api/medicines") {
         const query = (requestUrl.searchParams.get("q") || "").trim();
@@ -162,3 +171,7 @@ server.listen(PORT, HOST, () => {
     console.log(`medic.in running at http://${HOST}:${PORT}`);
     if (!ABDM_API_KEY) console.log("ABDM search disabled: set ABDM_API_KEY to enable medicine results.");
 });
+
+const shutdown = () => server.close(() => process.exit(0));
+process.on("SIGTERM", shutdown);
+process.on("SIGINT", shutdown);
