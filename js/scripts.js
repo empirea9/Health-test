@@ -92,42 +92,42 @@ if (themeBtn && themeIcon) {
         });
     }
 
-    /* ==========================================================================
-       4. Clustered Column Chart Generator
+/* ==========================================================================
+       4. Clustered Column Chart Generator (Static Data)
        ========================================================================== */
     const chartTrack = document.getElementById('home-main-chart');
     if (chartTrack) {
-        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        const medsDatabase = ['Paracetamol', 'Amoxicillin', 'Ibuprofen', 'Metformin', 'Saline', 'Aspirin', 'Insulin', 'Omeprazole'];
+        // Hardcoded, realistic health data points to replace randomness
+        const staticData = [
+            { month: 'Jan', app: [5, 12], test: [15], meds: ['Paracetamol x1', 'Amoxicillin x1'] },
+            { month: 'Feb', app: [10], test: [], meds: ['Ibuprofen x1'] },
+            { month: 'Mar', app: [2, 22], test: [3], meds: ['Metformin x2'] },
+            { month: 'Apr', app: [], test: [], meds: ['Omeprazole x1'] },
+            { month: 'May', app: [14], test: [14], meds: ['Aspirin x1'] },
+            { month: 'Jun', app: [8], test: [], meds: ['Insulin x2'] },
+            { month: 'Jul', app: [4], test: [5], meds: ['Paracetamol x1', 'Ibuprofen x1'] },
+            { month: 'Aug', app: [15, 25], test: [12, 16], meds: ['Amoxicillin x1'] },
+            { month: 'Sep', app: [2], test: [], meds: ['Saline x2'] },
+            { month: 'Oct', app: [11], test: [11], meds: ['Metformin x1', 'Insulin x1'] },
+            { month: 'Nov', app: [7], test: [8], meds: ['Aspirin x1'] },
+            { month: 'Dec', app: [1, 15], test: [1], meds: ['Ibuprofen x1', 'Paracetamol x1'] }
+        ];
         
         let chartHTML = '';
-        months.forEach(month => {
-            const appCount = Math.floor(Math.random() * 5) + 2;
-            const testCount = Math.floor(Math.random() * 4) + 1;
-            const medCount = Math.floor(Math.random() * 5) + 2;
+        staticData.forEach(data => {
+            const appCount = data.app.length;
+            const testCount = data.test.length;
+            const medCount = data.meds.length;
             
-            const appHeight = (appCount / 7) * 75 + 10;
-            const testHeight = (testCount / 7) * 75 + 10;
-            const medHeight = (medCount / 7) * 75 + 10;
+            // Map the height percentages logically based on low numerical counts
+            const appHeight = appCount === 0 ? 5 : (appCount * 30) + 15;
+            const testHeight = testCount === 0 ? 5 : (testCount * 30) + 15;
+            const medHeight = medCount === 0 ? 5 : (medCount * 30) + 15;
             
-            let appDates = [];
-            for (let i = 0; i < appCount; i++) {
-                appDates.push(`${month} ${Math.floor(Math.random() * 28) + 1}`);
-            }
-            appDates.sort((a, b) => parseInt(a.split(' ')[1]) - parseInt(b.split(' ')[1]));
-            
-            let testDates = [];
-            for (let i = 0; i < testCount; i++) {
-                testDates.push(`${month} ${Math.floor(Math.random() * 28) + 1}`);
-            }
-            testDates.sort((a, b) => parseInt(a.split(' ')[1]) - parseInt(b.split(' ')[1]));
-            
-            let medList = [];
-            for (let i = 0; i < medCount; i++) {
-                let randomMed = medsDatabase[Math.floor(Math.random() * medsDatabase.length)];
-                let randomQty = Math.floor(Math.random() * 40) + 5;
-                medList.push(`${randomMed} x${randomQty}`);
-            }
+            // Generate clean tooltip lists
+            const appDates = appCount > 0 ? data.app.map(d => `${data.month} ${d}`).join('<br>') : 'None';
+            const testDates = testCount > 0 ? data.test.map(d => `${data.month} ${d}`).join('<br>') : 'None';
+            const medList = medCount > 0 ? data.meds.join('<br>') : 'None';
             
             chartHTML += `
                 <div class="chart-month-group">
@@ -137,7 +137,7 @@ if (themeBtn && themeIcon) {
                             <div class="chart-bar bg-app" style="height: ${appHeight}%"></div>
                             <div class="tooltip">
                                 <span class="tooltip-title">Apps Booked</span>
-                                <span class="tooltip-details">${appDates.join('<br>')}</span>
+                                <span class="tooltip-details">${appDates}</span>
                             </div>
                         </div>
                         <div class="chart-bar-wrapper">
@@ -145,7 +145,7 @@ if (themeBtn && themeIcon) {
                             <div class="chart-bar bg-test" style="height: ${testHeight}%"></div>
                             <div class="tooltip">
                                 <span class="tooltip-title">Tests Taken</span>
-                                <span class="tooltip-details">${testDates.join('<br>')}</span>
+                                <span class="tooltip-details">${testDates}</span>
                             </div>
                         </div>
                         <div class="chart-bar-wrapper">
@@ -153,11 +153,11 @@ if (themeBtn && themeIcon) {
                             <div class="chart-bar bg-med" style="height: ${medHeight}%"></div>
                             <div class="tooltip">
                                 <span class="tooltip-title">Purchased</span>
-                                <span class="tooltip-details">${medList.join('<br>')}</span>
+                                <span class="tooltip-details">${medList}</span>
                             </div>
                         </div>
                     </div>
-                    <span class="month-label">${month}</span>
+                    <span class="month-label">${data.month}</span>
                 </div>
             `;
         });
@@ -201,42 +201,51 @@ if (themeBtn && themeIcon) {
         }
     }
 
-    /* ==========================================================================
-       6. Notification Bar Minimize Animation
+ /* ==========================================================================
+       6. Notification Bar Minimize Animation & Session Storage
        ========================================================================== */
     const closeBtn = document.getElementById('close-notification');
     const notificationBar = document.getElementById('urgency-notification');
     const targetIcon = document.getElementById('notif-btn');
     
-    if (closeBtn && notificationBar && targetIcon) {
-        closeBtn.addEventListener('click', () => {
-            const barRect = notificationBar.getBoundingClientRect();
-            const targetRect = targetIcon.getBoundingClientRect();
-            const targetCenterX = targetRect.left + targetRect.width / 2;
-            const targetCenterY = targetRect.top + targetRect.height / 2;
-            
-            const originX = targetCenterX - barRect.left;
-            const originY = targetCenterY - barRect.top;
-            
-            notificationBar.style.transformOrigin = `${originX}px ${originY}px`;
-            notificationBar.style.transition = 'transform 0.5s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.4s ease';
-            notificationBar.style.transform = 'scale(0)';
-            notificationBar.style.opacity = '0';
-            notificationBar.style.pointerEvents = 'none';
-            
-            setTimeout(() => {
-                notificationBar.style.transition = 'height 0.4s ease, margin 0.4s ease, padding 0.4s ease';
-                notificationBar.style.height = '0px';
-                notificationBar.style.margin = '0px';
-                notificationBar.style.padding = '0px';
-                notificationBar.style.border = 'none';
-                notificationBar.style.overflow = 'hidden';
+    if (notificationBar) {
+        // 1. Check local session on load
+        if (sessionStorage.getItem('urgencyNotifClosed') === 'true') {
+            notificationBar.style.display = 'none';
+        } 
+        // 2. Always bind the close button if it exists
+        else if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+                // Store the dismissed state in the current session
+                sessionStorage.setItem('urgencyNotifClosed', 'true');
                 
-                setTimeout(() => {
-                    notificationBar.remove();
-                }, 400);
-            }, 300);
-        });
+                // If the bell icon exists, animate into it
+                if (targetIcon) {
+                    const barRect = notificationBar.getBoundingClientRect();
+                    const targetRect = targetIcon.getBoundingClientRect();
+                    const targetCenterX = targetRect.left + targetRect.width / 2;
+                    const targetCenterY = targetRect.top + targetRect.height / 2;
+                    
+                    const originX = targetCenterX - barRect.left;
+                    const originY = targetCenterY - barRect.top;
+                    
+                    notificationBar.style.transformOrigin = `${originX}px ${originY}px`;
+                    notificationBar.style.transform = 'scale(0)';
+                    notificationBar.style.opacity = '0';
+                    notificationBar.style.pointerEvents = 'none';
+                    
+                    setTimeout(() => {
+                        notificationBar.style.display = 'none';
+                    }, 400); 
+                } else {
+                    // Fallback: Just fade out if the bell icon is missing
+                    notificationBar.style.opacity = '0';
+                    setTimeout(() => {
+                        notificationBar.style.display = 'none';
+                    }, 300);
+                }
+            });
+        }
     }
 
     /* ==========================================================================
@@ -1010,3 +1019,79 @@ if (themeBtn && themeIcon) {
         loadCommonMedicines();
     }
 });
+});
+
+/* ==========================================================================
+       9. Docs View Dynamic Folders
+       ========================================================================== */
+    const folderData = {
+        rx: [
+            { name: "General Checkup - Dr. Carter", type: "PDF", size: "800 KB", icon: "prescriptions", color: "bg-app-alpha" },
+            { name: "Dermatologist Rx", type: "PDF", size: "1.1 MB", icon: "prescriptions", color: "bg-app-alpha" },
+            { name: "Refill Authorization", type: "JPG", size: "450 KB", icon: "image", color: "bg-med-alpha" }
+        ],
+        labs: [
+            { name: "Complete Blood Count", type: "PDF", size: "1.2 MB", icon: "science", color: "bg-test-alpha" },
+            { name: "Lipid Panel", type: "PDF", size: "900 KB", icon: "science", color: "bg-test-alpha" },
+            { name: "Thyroid Test", type: "PDF", size: "1.5 MB", icon: "science", color: "bg-test-alpha" },
+            { name: "Metabolic Panel", type: "PDF", size: "1.1 MB", icon: "science", color: "bg-test-alpha" }
+        ],
+        bills: [
+            { name: "Pharmacy Bill - Aug", type: "JPG", size: "300 KB", icon: "receipt_long", color: "bg-med-alpha" },
+            { name: "Hospital Copay", type: "PDF", size: "1.4 MB", icon: "receipt_long", color: "bg-med-alpha" },
+            { name: "Insurance Claim #9082", type: "PDF", size: "2.1 MB", icon: "health_and_safety", color: "bg-neutral-alpha" },
+            { name: "Dental Out-of-pocket", type: "JPG", size: "550 KB", icon: "receipt_long", color: "bg-med-alpha" }
+        ],
+        scans: [
+            { name: "Chest X-Ray", type: "PNG", size: "4.5 MB", icon: "radiology", color: "bg-test-alpha" },
+            { name: "Dental Scan", type: "JPG", size: "2.2 MB", icon: "dentistry", color: "bg-test-alpha" }
+        ],
+        // ADDED MISSING ID DATA
+        id: [
+            { name: "Domestic Help Medical Clearance", type: "PDF", size: "2.1 MB", icon: "badge", color: "bg-neutral-alpha" },
+            { name: "Insurance ID Card", type: "PDF", size: "600 KB", icon: "health_and_safety", color: "bg-app-alpha" }
+        ]
+    };
+
+    window.openFolder = function(folderKey, folderTitle) {
+        const titleEl = document.getElementById('current-folder-title');
+        const gridEl = document.getElementById('folder-contents-grid');
+        
+        if (!titleEl || !gridEl) return;
+        
+        titleEl.textContent = folderTitle;
+        
+        // Toggle active visual state
+        document.querySelectorAll('.folder-card').forEach(card => {
+            if (card.getAttribute('data-folder') === folderKey) {
+                card.classList.add('active');
+            } else {
+                card.classList.remove('active');
+            }
+        });
+
+        // Clear and populate files
+        gridEl.innerHTML = '';
+        
+        folderData[folderKey].forEach(file => {
+            gridEl.innerHTML += `
+                <button class="document-link-btn" type="button" onclick="alert('Downloading ${file.name}...')">
+                    <div class="doc-btn-left">
+                        <div class="btn-icon ${file.color}"><span class="material-symbols-rounded">${file.icon}</span></div>
+                        <div class="doc-text-wrapper">
+                            <span class="doc-name">${file.name}</span>
+                            <span class="subtle" style="font-size: 0.75rem;">${file.type} • ${file.size}</span>
+                        </div>
+                    </div>
+                    <span class="material-symbols-rounded link-arrow">download</span>
+                </button>
+            `;
+        });
+    };
+    
+    // Initialize default folder on page load
+    setTimeout(() => {
+        if (document.getElementById('folder-contents-grid')) {
+            window.openFolder('rx', 'Prescriptions');
+        }
+    }, 100);

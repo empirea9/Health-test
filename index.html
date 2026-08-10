@@ -70,18 +70,27 @@
                     <button class="topbar-action" id="theme-btn" type="button" aria-label="Toggle Theme">
                         <span class="material-symbols-rounded" aria-hidden="true">dark_mode</span>
                     </button>
+                    
+                    <!-- NOTIFICATION POPOVER -->
                     <div class="popover-container">
+                        <!-- THIS IS THE BUTTON THAT WENT MISSING -->
                         <button class="topbar-action popover-toggle" id="notif-btn" type="button" aria-label="Notification">
                             <span class="material-symbols-rounded" aria-hidden="true">notifications</span>
                         </button>
                         <div class="popover-panel" id="notif-panel" aria-hidden="true">
                             <p class="eyebrow">Notifications</p>
                             <div class="activity-list">
+                                <div class="activity-item">
+                                    <span class="activity-time" style="color: #ef4444;">Urgent</span>
+                                    <p>Appointment scheduled for 24/08/26 was rescheduled to 25/08/26.</p>
+                                </div>
                                 <div class="activity-item"><span class="activity-time">Now</span><p>Your blood test results are ready.</p></div>
                                 <div class="activity-item"><span class="activity-time">10m</span><p>Prescription refill approved.</p></div>
                             </div>
                         </div>
                     </div>
+
+                    <!-- MESSAGES POPOVER -->
                     <div class="popover-container">
                         <button class="topbar-action popover-toggle" id="msg-btn" type="button" aria-label="Messaging">
                             <span class="material-symbols-rounded" aria-hidden="true">chat_bubble</span>
@@ -95,6 +104,21 @@
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <!-- FLOATING URGENT NOTIFICATION -->
+            <div id="urgency-notification" class="notification-bar">
+                <div class="notification-content">
+                    <svg class="urgency-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                    <span class="notification-text">Appointment scheduled for 24/08/26 was rescheduled to 25/08/26</span>
+                </div>
+                <button id="close-notification" class="close-btn">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
             </div>
 
             <!-- VIEWS CONTAINER -->
@@ -154,28 +178,28 @@
                                 </div>
                             </div>
                             <div class="document-list-stack">
-                                <button class="document-link-btn" type="button">
+                                <button class="document-link-btn" type="button" data-target="view-docs" onclick="window.openFolder('labs', 'Lab Reports')">
                                     <div class="doc-btn-left">
                                         <span class="material-symbols-rounded">medical_information</span>
                                         <span class="doc-name">Blood Panel</span>
                                     </div>
                                     <span class="material-symbols-rounded link-arrow">arrow_outward</span>
                                 </button>
-                                <button class="document-link-btn" type="button">
+                                <button class="document-link-btn" type="button" data-target="view-docs" onclick="window.openFolder('id', 'Identity & Clearances')">
                                     <div class="doc-btn-left">
                                         <span class="material-symbols-rounded">vaccines</span>
                                         <span class="doc-name">Vaccination</span>
                                     </div>
                                     <span class="material-symbols-rounded link-arrow">arrow_outward</span>
                                 </button>
-                                <button class="document-link-btn" type="button">
+                                <button class="document-link-btn" type="button" data-target="view-docs" onclick="window.openFolder('rx', 'Prescriptions')">
                                     <div class="doc-btn-left">
                                         <span class="material-symbols-rounded">assignment</span>
                                         <span class="doc-name">Discharge</span>
                                     </div>
                                     <span class="material-symbols-rounded link-arrow">arrow_outward</span>
                                 </button>
-                                <button class="document-link-btn" type="button">
+                                <button class="document-link-btn" type="button" data-target="view-docs" onclick="window.openFolder('bills', 'Bills & Receipts')">
                                     <div class="doc-btn-left">
                                         <span class="material-symbols-rounded">health_and_safety</span>
                                         <span class="doc-name">Insurance</span>
@@ -280,28 +304,185 @@
                     </section>
                 </section>
 
-                <!-- ==================== DOCS VIEW ==================== -->
+ <!-- ==================== DOCS VIEW ==================== -->
                 <section class="page-shell page-view" id="view-docs">
-                    <section class="page-row panel">
-                        <div class="row-grid three-col">
-                            <article class="mini-card">
-                                <p class="card-label">Recent Reports</p>
-                                <h3>Blood Panel</h3>
-                                <p class="subtle">Completed on Oct 12. All markers normal.</p>
+                    
+                    <!-- Row 1: Recent Files & Actions -->
+                    <section class="naked-row docs-fluid-row">
+                        <div class="panel two-thirds-panel">
+                            <div class="chart-header" style="margin-bottom: 16px;">
+                                <div class="chart-title">
+                                    <h2>Recent Files</h2>
+                                </div>
+                                <div class="chart-nav">
+                                    <button class="nav-arrow" aria-label="Filter"><span class="material-symbols-rounded">filter_list</span></button>
+                                </div>
+                            </div>
+                            
+                            <div class="docs-file-grid">
+                                <button class="document-link-btn" type="button" onclick="alert('Downloading Complete Blood Count...')">
+                                    <div class="doc-btn-left">
+                                        <div class="btn-icon bg-test-alpha"><span class="material-symbols-rounded">science</span></div>
+                                        <div class="doc-text-wrapper">
+                                            <span class="doc-name">Complete Blood Count</span>
+                                            <span class="subtle">Lab Report • PDF • 1.2 MB</span>
+                                        </div>
+                                    </div>
+                                    <span class="material-symbols-rounded link-arrow">download</span>
+                                </button>
+                                
+                                <button class="document-link-btn" type="button" onclick="alert('Downloading Pharmacy Bill...')">
+                                    <div class="doc-btn-left">
+                                        <div class="btn-icon bg-med-alpha"><span class="material-symbols-rounded">receipt_long</span></div>
+                                        <div class="doc-text-wrapper">
+                                            <span class="doc-name">Pharmacy Bill</span>
+                                            <span class="subtle">Receipt • JPG • 450 KB</span>
+                                        </div>
+                                    </div>
+                                    <span class="material-symbols-rounded link-arrow">download</span>
+                                </button>
+
+                                <button class="document-link-btn" type="button" onclick="alert('Downloading Dr. Carter Rx...')">
+                                    <div class="doc-btn-left">
+                                        <div class="btn-icon bg-app-alpha"><span class="material-symbols-rounded">prescriptions</span></div>
+                                        <div class="doc-text-wrapper">
+                                            <span class="doc-name">Dr. Carter Rx</span>
+                                            <span class="subtle">Prescription • PDF • 800 KB</span>
+                                        </div>
+                                    </div>
+                                    <span class="material-symbols-rounded link-arrow">download</span>
+                                </button>
+
+                                <button class="document-link-btn" type="button" onclick="alert('Downloading Medical Clearance...')">
+                                    <div class="doc-btn-left">
+                                        <div class="btn-icon bg-neutral-alpha"><span class="material-symbols-rounded">badge</span></div>
+                                        <div class="doc-text-wrapper">
+                                            <span class="doc-name">Domestic Help Medical Clearance</span>
+                                            <span class="subtle">Govt. Form • PDF • 2.1 MB</span>
+                                        </div>
+                                    </div>
+                                    <span class="material-symbols-rounded link-arrow">download</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="action-btn-stack one-third-panel">
+                            <button class="action-card-btn">
+                                <div class="btn-icon bg-app-alpha"><span class="material-symbols-rounded">cloud_upload</span></div>
+                                <span class="btn-label">Upload Document</span>
+                            </button>
+                            <button class="action-card-btn">
+                                <div class="btn-icon bg-med-alpha"><span class="material-symbols-rounded">sync</span></div>
+                                <span class="btn-label">Sync with Hospital</span>
+                            </button>
+                            <button class="action-card-btn">
+                                <div class="btn-icon bg-test-alpha"><span class="material-symbols-rounded">share</span></div>
+                                <span class="btn-label">Share Records</span>
+                            </button>
+                        </div>
+                    </section>
+
+                    <!-- Row 2: Categories, Folder Contents, File Preview -->
+                    <section class="naked-row second-row-wrapper docs-fluid-row">
+                        
+                        <!-- Left Square: Vertically Scrollable Category Folders -->
+                        <div class="panel perfect-square-panel document-panel" style="padding: 24px;">
+                            <h3 class="section-accent-heading">Categories</h3>
+                            <div class="folder-grid">
+                                <div class="folder-card active" data-folder="rx" onclick="openFolder('rx', 'Prescriptions')">
+                                    <span class="material-symbols-rounded" style="font-size: 28px; color: var(--accent-tertiary);">folder_open</span>
+                                    <div class="folder-text">
+                                        <span class="folder-title">Prescriptions</span>
+                                        <span class="subtle" style="font-size: 0.75rem;">12 files</span>
+                                    </div>
+                                </div>
+                                <div class="folder-card" data-folder="labs" onclick="openFolder('labs', 'Lab Reports')">
+                                    <span class="material-symbols-rounded" style="font-size: 28px; color: var(--accent-secondary);">folder_open</span>
+                                    <div class="folder-text">
+                                        <span class="folder-title">Lab Reports</span>
+                                        <span class="subtle" style="font-size: 0.75rem;">8 files</span>
+                                    </div>
+                                </div>
+                                <div class="folder-card" data-folder="bills" onclick="openFolder('bills', 'Bills & Receipts')">
+                                    <span class="material-symbols-rounded" style="font-size: 28px; color: #10b981;">folder_open</span>
+                                    <div class="folder-text">
+                                        <span class="folder-title">Bills & Receipts</span>
+                                        <span class="subtle" style="font-size: 0.75rem;">24 files</span>
+                                    </div>
+                                </div>
+                                <div class="folder-card" data-folder="scans" onclick="openFolder('scans', 'Scans & X-Rays')">
+                                    <span class="material-symbols-rounded" style="font-size: 28px; color: #ef4444;">folder_open</span>
+                                    <div class="folder-text">
+                                        <span class="folder-title">Scans & X-Rays</span>
+                                        <span class="subtle" style="font-size: 0.75rem;">3 files</span>
+                                    </div>
+                                </div>
+                                <div class="folder-card" data-folder="id" onclick="openFolder('id', 'Identity & Clearances')">
+                                    <span class="material-symbols-rounded" style="font-size: 28px; color: var(--accent-primary);">folder_open</span>
+                                    <div class="folder-text">
+                                        <span class="folder-title">Identity & Clearances</span>
+                                        <span class="subtle" style="font-size: 0.75rem;">2 files</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Middle Flex: Dynamic Folder Contents -->
+                        <div class="panel middle-flex-panel bento-panel">
+                            <article class="bento-card" style="display: flex; flex-direction: column;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                                    <div>
+                                        <p class="card-label" style="margin-bottom: 4px;">Viewing Folder</p>
+                                        <h2 id="current-folder-title" class="facility-title-lg">Prescriptions</h2>
+                                    </div>
+                                    <span class="material-symbols-rounded subtle">sort</span>
+                                </div>
+                                
+                                <div id="folder-contents-grid" class="folder-file-list folder-contents-scroll">
+                                    <!-- JavaScript injects dynamic file cards here -->
+                                </div>
                             </article>
-                            <article class="mini-card">
-                                <p class="card-label">Documents</p>
-                                <ul class="action-list">
-                                    <li>Vaccination Record</li>
-                                    <li>Discharge Summary</li>
-                                    <li>Insurance Claim</li>
-                                </ul>
-                            </article>
-                            <article class="mini-card">
-                                <p class="card-label">Status</p>
-                                <h3>Verified</h3>
-                                <p class="subtle">All your medical records are currently synced with your primary care provider.</p>
-                            </article>
+                        </div>
+
+                        <!-- Right Square: File Preview Card -->
+                        <div class="panel perfect-square-panel document-panel" style="padding: 24px;">
+                            <div style="display: flex; flex-direction: column; height: 100%; justify-content: space-between;">
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                    <div>
+                                        <p class="card-label" style="margin-bottom: 8px;">FILE PREVIEW</p>
+                                        <h2 class="facility-title-lg">General Checkup - Rx</h2>
+                                        <p class="subtle">Issued: Aug 15, 2026</p>
+                                    </div>
+                                    <div class="btn-icon bg-app-alpha"><span class="material-symbols-rounded">verified_user</span></div>
+                                </div>
+                                
+                                <div class="rx-list-container">
+                                    <div class="rx-list-item">
+                                        <div>
+                                            <strong class="rx-text">Amoxicillin 500mg</strong><br>
+                                            <span class="subtle" style="font-size: 0.8rem;">Take 1 pill after meals</span>
+                                        </div>
+                                        <span class="rx-text" style="font-weight: 600;">14 Days</span>
+                                    </div>
+                                    <div class="rx-list-item">
+                                        <div>
+                                            <strong class="rx-text">Ibuprofen 400mg</strong><br>
+                                            <span class="subtle" style="font-size: 0.8rem;">Take 1 pill as needed</span>
+                                        </div>
+                                        <span class="rx-text" style="font-weight: 600;">5 Days</span>
+                                    </div>
+                                </div>
+
+                                <!-- Added flex-wrap: wrap so buttons drop to next line on heavy zoom -->
+                                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                                    <button class="action-card-btn" data-target="view-meds" style="flex: 1 1 140px; justify-content: center;">
+                                        <span class="material-symbols-rounded" style="font-size: 20px;">shopping_cart</span> Order Meds
+                                    </button>
+                                    <button class="action-card-btn" style="flex: 1 1 140px; justify-content: center;" onclick="alert('Downloading Rx PDF...')">
+                                        <span class="material-symbols-rounded" style="font-size: 20px;">download</span> PDF
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </section>
                 </section>

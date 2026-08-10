@@ -177,6 +177,12 @@ ul { list-style: none; }
 }
 .popover-panel.active { opacity: 1; visibility: visible; transform: translateY(0); }
 .notification-bar {
+    top: 96px; 
+    right: 32px;
+    max-width: 450px;
+    z-index: 45; /* Lowered from 100 so it sits behind the sidebar */
+    box-shadow: var(--shadow-md);
+    backdrop-filter: var(--glass-blur);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -241,18 +247,19 @@ body.light-theme .panel { background: #ffffff; box-shadow: 0 8px 24px rgba(117, 
 .three-col { grid-template-columns: repeat(3, 1fr); }
 
 /* Row 2 Structure */
-.second-row-wrapper { display: flex; gap: 24px; width: 100%; height: 360px; }
+.second-row-wrapper { display: flex; gap: 24px; width: 100%; height: auto; min-height: 360px; }
 .perfect-square-panel { flex: 0 0 auto; aspect-ratio: 1 / 1; height: 100%; }
 .middle-flex-panel { flex: 1; min-width: 0; }
 
 /* Document Buttons */
 .document-panel { display: flex; flex-direction: column; }
-.document-list-stack { display: flex; flex-direction: column; gap: 12px; flex: 1; justify-content: flex-end; }
+.document-list-stack { display: flex; flex-direction: column; gap: 12px; flex: 1; justify-content: flex-start; overflow-y:auto; min-height: 0; padding-right:4px; scrollbar-width: none;}
 .document-link-btn { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 14px 20px; background: var(--surface-glass); border: 1px solid var(--border-subtle); border-radius: 16px; color: var(--text-main); cursor: pointer; transition: all var(--transition-fast); }
 .document-link-btn:hover { background: var(--accent-primary-alpha); border-color: var(--accent-primary); color: var(--accent-primary); transform: translateY(-2px); }
 .doc-btn-left { display: flex; align-items: center; gap: 12px; font-weight: 500; font-size: 0.95rem; }
 .link-arrow { font-size: 1.25rem; transition: transform var(--transition-fast); }
 .document-link-btn:hover .link-arrow { transform: translate(2px, -2px); }
+.document-list-stack::-webkit-scrollbar { display: none; }
 
 /* ==========================================================================
    8. Action Stack Buttons
@@ -360,11 +367,11 @@ h3 { font-size: 1.5rem; }
 .sender-info { min-width: 0; }
 .sender-info strong, .sender-info .subtle { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .sender-info strong { color: var(--text-main); font-size: 0.95rem; }
-.message-body { background: var(--surface-hover); border-radius: 0 16px 16px 16px; padding: 14px; margin: 12px 0; font-size: 0.9rem; line-height: 1.5; color: var(--text-main); border-left: 2px solid #3B82F6; overflow-y: auto; flex: 1 1 0%; min-height: 0; }
+.message-body { background: var(--surface-glass); border-radius: 0 16px 16px 16px; padding: 14px; margin: 12px 0; font-size: 0.9rem; line-height: 1.5; color: var(--text-main); border-left: 2px solid #3B82F6; overflow-y: auto; flex: 1 1 0%; min-height: 0; }
 .message-body::-webkit-scrollbar { width: 4px; }
 .message-body::-webkit-scrollbar-thumb { background: var(--border-highlight); border-radius: 4px; }
 .message-footer { display: flex; width: 100%; }
-.reply-input-wrapper { display: flex; align-items: center; width: 100%; background: var(--surface-hover); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 4px 6px 4px 12px; transition: border-color var(--transition-fast); }
+.reply-input-wrapper { display: flex; align-items: center; width: 100%; background: var(--surface-glass); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 4px 6px 4px 12px; transition: border-color var(--transition-fast); }
 .reply-input-wrapper:focus-within { border-color: #3B82F6; }
 .reply-input { flex: 1; font-size: 0.85rem; color: var(--text-main); background: transparent; border: none; outline: none; width: 100%; }
 .reply-submit-btn { display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 8px; background: #3B82F6; color: #ffffff; cursor: pointer; transition: background var(--transition-fast), transform var(--transition-fast); flex-shrink: 0; }
@@ -378,7 +385,7 @@ h3 { font-size: 1.5rem; }
 .timeline-options-menu { position: absolute; top: calc(100% + 8px); right: -8px; background: var(--surface-card); border: 1px solid var(--border-highlight); border-radius: 12px; padding: 8px; width: max-content; box-shadow: var(--shadow-md); opacity: 0; visibility: hidden; transform: translateY(-8px); transition: all var(--transition-fast); z-index: 100; }
 .timeline-options-wrapper:hover .timeline-options-menu { opacity: 1; visibility: visible; transform: translateY(0); }
 .options-menu-item { display: block; padding: 10px 16px; border-radius: 8px; font-size: 0.85rem; color: var(--text-main); text-decoration: none; transition: background var(--transition-fast), color var(--transition-fast); }
-.options-menu-item:hover { background: var(--surface-hover); }
+.options-menu-item:hover { background: var(--surface-glass); }
 .options-menu-item.danger { color: #ef4444; margin-top: 4px; }
 .options-menu-item.danger:hover { background: rgba(239, 68, 68, 0.15); }
 .bento-timeline { display: flex; flex-direction: column; gap: 12px; flex: 1; min-height: 0; overflow-y: auto; padding-right: 4px; }
@@ -573,6 +580,85 @@ h3 { font-size: 1.5rem; }
 }
 
 /* ==========================================================================
+   Zoom-Friendly Button & Flex Adjustments
+   ========================================================================== */
+
+/* 1. Document Buttons (Recent Files & Folder Contents) */
+.document-link-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 16px;
+    background: var(--surface-glass);
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    color: var(--text-main);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    gap: 16px; /* Strict gap prevents icon overlap on zoom */
+    height: auto; /* Allows vertical growth on zoom */
+    min-height: 76px; 
+}
+
+.doc-btn-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex: 1;
+    min-width: 0;
+}
+
+/* 2. Intelligent Text Truncation/Wrapping for Files */
+.doc-name {
+    font-weight: 600;
+    /* Replaced rigid nowrap with a multi-line clamp for perfect zoom scaling */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    white-space: normal; 
+    overflow: hidden;
+    width: 100%;
+    line-height: 1.3;
+    margin-bottom: 2px;
+}
+
+.doc-text-wrapper .subtle {
+    white-space: normal;
+    line-height: 1.3;
+    display: block;
+}
+
+/* 3. Action Buttons (Upload, Sync, Share, Order Meds, PDF) */
+.action-card-btn {
+    flex: 1;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--surface-glass);
+    border: 1px solid var(--border-subtle);
+    border-radius: 20px;
+    padding: 12px 20px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    background-clip: padding-box;
+    height: auto; /* Critical for zoom scaling */
+    min-height: 64px;
+}
+
+.btn-label {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-main);
+    white-space: normal; /* Prevents text blowing out the button */
+    text-align: left;
+    line-height: 1.3;
+    flex: 1; /* Fills remaining space */
+    min-width: 0; /* Prevents flex blowout */
+}
+
+/* ==========================================================================
    14. Native App-Style Mobile UI Redesign
    ========================================================================== */
 @media (max-width: 1024px) {
@@ -588,10 +674,19 @@ h3 { font-size: 1.5rem; }
     .sidebar-header, .profile-button { display: none !important; }
     .sidebar-top { flex-direction: row; width: 100%; padding: 0; }
     .sidebar-nav { flex-direction: row; width: 100%; justify-content: space-around; padding: 0 8px; gap: 0; }
-    .nav-item { flex-direction: column; padding: 8px 12px; gap: 4px; background: transparent !important; border-radius: 8px; }
-    .nav-item .material-symbols-rounded { font-size: 24px; }
+    .nav-item { flex-direction: column; padding: 8px 12px; gap: 4px; background: transparent !important; border-radius: 8px; transition: transform 0.15s ease, color 0.2s ease; transform-origin: center; -webkit-tap-highlight-color: transparent;}
+    .nav-item .material-symbols-rounded { font-size: 24px; transition: transform 0.3s ease; will-change: transform; }
+    .nav-item:active { transform: scale(0.95); }
     .nav-item.active { color: var(--accent-primary); }
     .nav-label { display: block !important; opacity: 1 !important; visibility: visible !important; font-size: 0.65rem; text-align: center; margin: 0; }
+
+    .nav-item.active .material-symbols-rounded { animation: navPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+    
+    @keyframes navPop {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.35) translateY(-2px); }
+        100% { transform: scale(1) translateY(0); }
+    }
     
     .content-area { order: 1; }
     .workspace-topbar { height: auto; min-height: 70px; padding: 12px 16px; flex-wrap: nowrap; gap: 12px; }
@@ -799,3 +894,143 @@ body.light-theme.store-view-active #view-meds .store-panel { background: var(--b
 .medicine-card-stepper button .material-symbols-rounded { font-size: 19px; }
 .medicine-card-stepper strong { text-align: center; font-size: 0.78rem; font-weight: 700; }
 .medicine-card-stepper strong span { font-size: 0.95rem; }
+    /* Mobile Notification Override */
+    .notification-bar {
+        top: 86px;
+        left: 16px;
+        right: 16px;
+        max-width: none;
+    }
+
+/* ==========================================================================
+   15. Docs View Styling (Desktop / Default)
+   ========================================================================== */
+
+/* 1. Grid for top "Recent Files" */
+.docs-file-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    width: 100%;
+    margin-top: 8px;
+}
+
+/* 2. Scrollable containers */
+.folder-contents-scroll {
+    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
+    padding-right: 8px;
+    align-content: flex-start;
+}
+.folder-contents-scroll::-webkit-scrollbar { width: 4px; }
+.folder-contents-scroll::-webkit-scrollbar-thumb { background: var(--border-highlight); border-radius: 4px; }
+
+/* 3. File Buttons Flex & Truncation */
+.document-link-btn {
+    width: 100%;
+    min-width: 0;
+    padding: 12px 16px;
+}
+.doc-btn-left { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
+.doc-text-wrapper { text-align: left; display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.doc-name { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; width: 100%; }
+
+/* 4. Vertical List for "Viewing Folder" */
+.folder-file-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    margin-top: 8px;
+}
+.folder-file-list .document-link-btn { flex: 0 0 auto; }
+
+/* 5. Category Folders List */
+.folder-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 8px;
+}
+.folder-grid::-webkit-scrollbar { width: 4px; }
+.folder-grid::-webkit-scrollbar-thumb { background: var(--border-highlight); border-radius: 4px; }
+
+.folder-card {
+    background: var(--surface-glass);
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex: 0 0 auto;
+}
+.folder-text { display: flex; flex-direction: column; text-align: left; flex: 1; }
+.folder-card:hover { transform: translateX(4px); border-color: var(--accent-primary); background: var(--surface-glass); }
+.folder-card.active { border-color: var(--accent-primary); background: var(--accent-primary-alpha); box-shadow: inset 0 0 0 1px var(--accent-primary); color: var(--accent-primary); }
+
+/* 6. Prescription Preview Details */
+.preview-text-light { color: rgba(255, 255, 255, 0.7) !important; }
+
+.rx-list-container {
+    background: rgba(35, 31, 36, 0.9);
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    padding: 16px;
+    margin: 16px 0;
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+}
+body.light-theme .rx-list-container { background: var(--surface-glass); }
+.rx-list-container::-webkit-scrollbar { width: 4px; }
+.rx-list-container::-webkit-scrollbar-thumb { background: var(--border-highlight); border-radius: 4px; }
+
+.rx-list-item { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--border-subtle); padding-bottom: 12px; margin-bottom: 12px; }
+.rx-list-item:last-child { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
+.rx-text { color: var(--text-main); }
+
+.dark-inner-btn { background: var(--surface-card) !important; color: var(--text-main) !important; border: 1px solid var(--border-subtle) !important; box-shadow: var(--shadow-sm) !important; }
+.dark-inner-btn:hover { background: var(--surface-hover) !important; border-color: var(--accent-primary) !important; }
+
+
+/* ==========================================================================
+   Docs View Specific Mobile Overrides (MUST BE INSIDE MEDIA QUERY)
+   ========================================================================== */
+@media (max-width: 1024px) {
+    #view-docs .panel {
+        max-width: 100%;
+        min-width: 0;
+        overflow: hidden;
+    }
+
+    /* Collapse the top 2-column grid to 1 column */
+    .docs-file-grid { 
+        display: flex !important; 
+        flex-direction: column; 
+    }
+
+    /* Stack the side action buttons */
+    #view-docs .action-btn-stack {
+        display: flex !important;
+        flex-direction: column !important;
+        width: 100%;
+        padding: 0 !important; /* Fixes alignment issue */
+    }
+
+    #view-docs .action-card-btn {
+        flex-direction: row !important;
+        justify-content: flex-start !important;
+        text-align: left !important;
+        min-height: 64px !important;
+        padding: 16px 20px !important;
+        width: 100%;
+    }
+}
